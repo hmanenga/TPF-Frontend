@@ -11,7 +11,7 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: colors.primary,
         padding: SPACING.small,
-        borderRadius: BORDER_RADIUS.small 
+        borderRadius: BORDER_RADIUS.small,
     },
     text: { 
         color: colors.textPrimary,

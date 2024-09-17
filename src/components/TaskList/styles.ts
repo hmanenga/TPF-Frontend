@@ -17,5 +17,13 @@ export default StyleSheet.create({
         color: Colors.white,
         padding: SPACING.small,
         marginVertical: SPACING.small
+    },
+    taskInput: {
+        color: colors.gray,
+        padding: SPACING.xsmall,
+        backgroundColor: colors.white,
+        borderRadius: BORDER_RADIUS.small,
+        marginBottom: SPACING.small,
+        marginTop: SPACING.medium
     }
 });
