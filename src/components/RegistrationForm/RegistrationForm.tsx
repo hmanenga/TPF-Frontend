@@ -44,7 +44,18 @@ export default function RegistrationForm() {
    * It currently does nothing, but you can add your validation logic here.
    */
   const handleSubmit = () => {
-
+    setErrorMessage(''); // Clear previous error message
+    if (!validateEmail(email)) {
+      setErrorMessage('Invalid email format');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setErrorMessage('Password must be at least 6 characters');
+      return;
+    }
+    // Reset form after submission
+    setEmail('');
+    setPassword('');
   };
 
   return (
