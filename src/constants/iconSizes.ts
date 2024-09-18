@@ -7,7 +7,7 @@ interface IconSizes {
   }
   
   const ICON_SIZES: IconSizes = {
-    small: 20,
+    small: 24,
     medium: 30,
     large: 40,
   };

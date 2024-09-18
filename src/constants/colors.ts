@@ -6,7 +6,7 @@ const colors = {
     textPrimary: '#ffff', 
     secondaryText: '#ffff',
     border: '#bdc3c7',
-    iconColor: 'gray',
+    iconColor: '#99A9A9A',
     white: '#ffff',
     gray: 'gray',
     submitButton: 'green',
