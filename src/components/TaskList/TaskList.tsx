@@ -3,19 +3,39 @@ import TaskListItem from '../TaskListItem/TaskListItem';
 import styles from './styles';
 import {useState} from 'react';
 import colors from '../../constants/colors';
+import { useNavigation } from '@react-navigation/native';
+
 
 const taskList = [
-  {id: '1', description: 'First Task'},
-  {id: '2', description: 'Second Task'},
-  {id: '3', description: 'Third Task'},
+  {
+    id: '1',
+    title: 'First Task',
+    description: 'Description for First Task',
+    dueDate: '2022-12-31',
+    priority: 'High',
+  },
+  {
+    id: '2',
+    title: 'Second Task',
+    description: 'Description for Second Task',
+    dueDate: '2022-12-30',
+    priority: 'Medium',
+  },
+  {
+    id: '3',
+    title: 'Third Task',
+    description: 'Description for Third Task',
+    dueDate: '2022-12-29',
+    priority: 'Low',
+  },
 ];
 export default function TaskList() {
   const [tasks, setTasks] = useState(taskList);
   const [newTask,setNewTask] = useState('');
+  const navigation = useNavigation();
 
-  const createTask =(e: EventSource) =>{
-    setTasks([...tasks, {id: new Date().getMilliseconds().toString(), description: newTask}]);
-    setNewTask('');
+  const handleCreateTask =(e: EventSource) =>{
+    navigation.navigate('AddTaskScreen');
   }
   return (
     <View style={styles.container}>
@@ -26,15 +46,7 @@ export default function TaskList() {
         renderItem={({item}) => <TaskListItem task={item} />}
         keyExtractor={item => item.id}
       />
-      {/*Add new Task */}
-      <TextInput
-      value={newTask}
-        placeholder="Add new task here..."
-        placeholderTextColor={colors.gray}
-        style={styles.taskInput}
-        onChangeText={setNewTask}
-      />
-      <Button title="Add Task" color={colors.submitButton} onPress={createTask} />
+      <Button style={{marginVertical: 10}} title="Add Task" color={colors.submitButton} onPress={handleCreateTask} />
     </View>
   );
 }

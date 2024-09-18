@@ -1,27 +1,13 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// App.tsx
 
 import React from 'react';
-import {SafeAreaView, View, StyleSheet} from 'react-native';
-//TaksItem imports
-import TaskListItem from './src/components/TaskListItem/TaskListItem';
-import TaskList from './src/components/TaskList/TaskList';
-import AppStyles from './AppStyles';
+import {NavigationContainer} from '@react-navigation/native';
+import StackNavigator from './src/navigators/stacks/StackNavigator';
 
-function App(): React.JSX.Element {
+export default function App(): React.JSX.Element {
   return (
-    <SafeAreaView >
-      <View style={AppStyles.container}>
-        <TaskList />
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
   );
 }
-
- 
-
-export default App;
