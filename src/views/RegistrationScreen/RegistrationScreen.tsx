@@ -1,3 +1,12 @@
+/**
+ * This function represents the RegistrationScreen component, which is part of a mobile application.
+ * The screen is responsible for displaying a form for users to create a new account.
+ * It includes input fields for user name, email, password, and confirm password.
+ *
+ * @param props - The props passed to the component. Currently, no props are used.
+ * @returns - A React Native component that renders the registration screen.
+ */
+
 import RegistrationForm from '../../components/RegistrationForm/RegistrationForm';
 import {View, TextInput, Pressable, SafeAreaView, Text} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -15,6 +24,82 @@ export default function RegistrationScreen() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [errors, setErrors] = useState({
+    userName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const navigation = useNavigation();
+
+  const handleSubmit = () => {
+    // TODO: Implement the logic to create a new account
+    // Example: save the user information to the database and navigate to the main screen
+    console.log(
+      'Creating account with:',
+      userName,
+      email,
+      password,
+      confirmPassword,
+    );
+    validateFields();
+    
+  };
+  /**
+   * Validates the input fields of the task form.
+   * Sets error messages for empty fields and updates the errors state.
+   * If all fields are valid, calls the handleAddTask function.
+   */
+  const validateFields = () => {
+    const newErrors = {
+      userName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    };
+
+    if (!userName.trim()) {
+      newErrors.userName = 'User name is missing';
+    } else {
+      newErrors.userName = '';
+    }
+
+    if (!email.trim()) {
+      newErrors.email = 'Email is missing';
+    } else {
+      newErrors.email = '';
+    }
+
+    if (!password.trim()) {
+      newErrors.password = 'Password is missing';
+    } else {
+      newErrors.password = '';
+    }
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = 'Confirm password is missing';
+    } else {
+      newErrors.confirmPassword = '';
+    }
+    if (Object.values(newErrors).every(error => error === '')) {
+      setErrors(newErrors);
+      handleRegisterUser();
+      navigation.navigate('HomeScreen');
+    } else {
+      setErrors(newErrors);
+    }
+  };
+
+  const handleRegisterUser = () => {
+    // TODO: Implement the logic to register the user
+    // Example: save the user information to the database
+    console.log(
+      'Registering user:',
+      userName,
+      email,
+      password,
+      confirmPassword,
+    );
+  };
 
   return (
     <SafeAreaView style={styles.formContainer}>
@@ -40,6 +125,10 @@ export default function RegistrationScreen() {
             accessibilityLabel="User name input"
           />
         </View>
+        {errors.userName ? (
+          <Text style={styles.error}>{errors.userName}</Text>
+        ) : null}
+
         {/* Email name input field*/}
         <View style={styles.inputContainer}>
           <Fontisto
@@ -58,6 +147,8 @@ export default function RegistrationScreen() {
             accessibilityLabel="Email Input"
           />
         </View>
+        {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
+
         {/* Password input  */}
         <View style={styles.inputContainer}>
           <Fontisto
@@ -78,6 +169,10 @@ export default function RegistrationScreen() {
             accessibilityLabel="Password Input"
           />
         </View>
+        {errors.password ? (
+          <Text style={styles.error}>{errors.password}</Text>
+        ) : null}
+
         {/*Confirm password input */}
         <View style={styles.inputContainer}>
           <Fontisto
@@ -98,18 +193,23 @@ export default function RegistrationScreen() {
             accessibilityLabel="Confirm Password Input"
           />
         </View>
+        {errors.confirmPassword ? (
+          <Text style={styles.error}>{errors.confirmPassword}</Text>
+        ) : null}
 
         <View style={styles.signInButtonContainer}>
-          <Text style={styles.signIn}>Create</Text>
-          <LinearGradient
-            colors={[colors.primary, 'green']}
-            style={styles.linearGradient}>
-            <AntDesign
-              name={'arrowright'}
-              color={colors.white}
-              size={ICON_SIZES.medium}
-            />
-          </LinearGradient>
+          <Pressable onPress={handleSubmit}>
+            <Text style={styles.signIn}>Create</Text>
+            <LinearGradient
+              colors={[colors.primary, 'green']}
+              style={styles.linearGradient}>
+              <AntDesign
+                name={'arrowright'}
+                color={colors.white}
+                size={ICON_SIZES.medium}
+              />
+            </LinearGradient>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
