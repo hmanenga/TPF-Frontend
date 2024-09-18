@@ -1,18 +1,31 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, SafeAreaView, Image, Text} from 'react-native';
+import {
+  View,
+  TextInput,
+  Pressable,
+  SafeAreaView,
+  Image,
+  Text,
+  ImageBackground,
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import AntDesign from "react-native-vector-icons/AntDesign"
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from './styles';
 import ICON_SIZES from '../../constants/iconSizes';
 import colors from '../../constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const navigation = useNavigation();
 
   const handleSubmit = () => {};
+  const handleRegister = () => {
+    navigation.navigate('RegistrationScreen');
+  };
 
   return (
     <SafeAreaView style={styles.formContainer}>
@@ -73,13 +86,17 @@ export default function LoginScreen() {
             colors={[colors.primary, 'green']}
             style={styles.linearGradient}>
             <AntDesign
-            name={'arrowright'}
-            color={colors.white}
-            size={ICON_SIZES.medium}
-          />
+              name={'arrowright'}
+              color={colors.white}
+              size={ICON_SIZES.medium}
+            />
           </LinearGradient>
         </View>
-        <Text style={styles.createAccountLink}>Don't have an account?<Text style={styles.createText}>create</Text></Text>
+        <Pressable onPress={handleRegister}>
+          <Text style={styles.createAccountLink}>
+            Don't have an account?<Text style={styles.createText}>create</Text>
+          </Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
