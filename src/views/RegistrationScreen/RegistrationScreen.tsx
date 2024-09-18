@@ -18,6 +18,7 @@ import colors from '../../constants/colors';
 import {useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import {validateEmail, validatePassword} from '../../utils/validations';
 
 export default function RegistrationScreen() {
   const [userName, setUserName] = useState<string>('');
@@ -43,7 +44,6 @@ export default function RegistrationScreen() {
       confirmPassword,
     );
     validateFields();
-    
   };
   /**
    * Validates the input fields of the task form.
@@ -67,18 +67,30 @@ export default function RegistrationScreen() {
     if (!email.trim()) {
       newErrors.email = 'Email is missing';
     } else {
-      newErrors.email = '';
+      if (!validateEmail(email)) {
+        newErrors.email = 'Invalid email format';
+      } else {
+        newErrors.email = '';
+      }
     }
 
     if (!password.trim()) {
       newErrors.password = 'Password is missing';
     } else {
-      newErrors.password = '';
+      if (!validatePassword(password)) {
+        newErrors.password = 'Password must be bigger than 6 characters';
+      } else {
+        newErrors.password = '';
+      }
     }
     if (!confirmPassword.trim()) {
       newErrors.confirmPassword = 'Confirm password is missing';
     } else {
-      newErrors.confirmPassword = '';
+      if(confirmPassword.trim()!==password.trim()) {
+        newErrors.confirmPassword = 'password must be equal to confirmation password';
+      }else {
+        newErrors.confirmPassword = '';
+      }
     }
     if (Object.values(newErrors).every(error => error === '')) {
       setErrors(newErrors);
