@@ -70,4 +70,7 @@ export default StyleSheet.create({
     fontSize: FONT_SIZES.medium,
     color: colors.white, // Use your color scheme
   },
+  errors: {
+    color: colors.error,
+  }
 });

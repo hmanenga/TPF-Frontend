@@ -9,7 +9,8 @@ const colors = {
     iconColor: 'gray',
     white: '#ffff',
     gray: 'gray',
-    submitButton: 'green'
+    submitButton: 'green',
+    error: 'red',
   };
   
   export default colors;

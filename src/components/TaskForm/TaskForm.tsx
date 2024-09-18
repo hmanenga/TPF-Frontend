@@ -1,13 +1,5 @@
-import React, {useState, useMemo} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Button,
-  Pressable,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TextInput, Button, Pressable} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
 import Task from '../../types/types';
@@ -60,55 +52,102 @@ const taskPriorityOptions = [
  */
 const TaskForm: React.FC<TaskFormProps> = () => {
   // State variables for task details
-  const [title, setTitle] = useState(''); // Title of the task
-  const [description, setDescription] = useState(''); // Description of the task
-  const [dueDate, setDueDate] = useState(''); // Due date of the task
-  const [priority, setPriority] = useState(''); // Priority of the task
+  const [task, setTask] = useState({
+    id: '',
+    title: '',
+    description: '',
+    dueDate: new Date(),
+    priority: '',
+  });
   const [open, setOpen] = useState(false); // Controls the visibility of the date picker
-  const [date, setDate] = useState(new Date()); // Selected date from the date picker
+  const [errors, setErrors] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    priority: '',
+  });
 
   /**
+   * Handles form fields changes.
+   */
+  const handleChange = (field: 'title' | 'description') => (value: string) => {
+    setTask(prevTask => ({
+      ...prevTask,
+      [field]: value,
+    }));
+  };
+  /**
    * Handles form submission to create a new task.
-   * Validates input fields and constructs a new task object.
    * Resets the input fields upon successful submission.
    */
   const handleSubmit = () => {
-    if (
-      title.trim() &&
-      description.trim() &&
-      dueDate.trim() &&
-      priority.trim()
-    ) {
-      const newTask: Task = {
-        id: new Date().getTime().toString(), // Unique ID for the task
-        title,
-        description,
-        dueDate,
-        priority,
-      };
-      // onAddTask(newTask); // Uncomment to call the task addition callback
-      setTitle('');
-      setDescription('');
-      setDueDate('');
-      setPriority('');
+    validateFields();
+  };
+
+  /**
+   * Validates the input fields of the task form.
+   * Sets error messages for empty fields and updates the errors state.
+   * If all fields are valid, calls the handleAddTask function.
+   */
+  const validateFields = () => {
+    const newErrors = {title: '', description: '', dueDate: '', priority: ''};
+
+    if (!task.title.trim()) {
+      newErrors.title = 'Title is missing';
+    } else {
+      newErrors.title = '';
+    }
+
+    if (!task.description.trim()) {
+      newErrors.description = 'Description is missing';
+    } else {
+      newErrors.description = '';
+    }
+
+    if (!task.priority.trim()) {
+      newErrors.priority = 'Priority is missing';
+    } else {
+      newErrors.priority = '';
+    }
+    if (!task.dueDate) {
+      newErrors.dueDate = 'Due date is missing';
+    } else {
+      newErrors.dueDate = '';
+    }
+    if (Object.values(newErrors).every(error => error === '')) {
+      setErrors(newErrors);
+      handleAddTask();
+    } else {
+      setErrors(newErrors);
     }
   };
+
+  /**
+   * Handles the addition of a new task.
+   * Constructs a new task object using the input fields and calls the onAddTask prop.
+   * Resets the input fields.
+   */
+  const handleAddTask = () => {};
 
   // Render the form UI
   return (
     <View style={styles.container}>
       <TextInput
-        value={title}
-        onChangeText={setTitle}
+        value={task.title}
+        onChangeText={handleChange('title')}
         placeholder="Title"
         style={styles.input}
       />
+      {errors.title ? <Text style={styles.errors}>{errors.title}</Text> : null}
       <TextInput
-        value={description}
-        onChangeText={setDescription}
+        value={task.description}
+        onChangeText={handleChange('description')}
         placeholder="Description"
         style={styles.input}
       />
+      {errors.description ? (
+        <Text style={styles.errors}> {errors.description}</Text>
+      ) : null}
       <Button
         color={colors.primary}
         title="Pick due date"
@@ -118,19 +157,25 @@ const TaskForm: React.FC<TaskFormProps> = () => {
         <DatePicker
           modal
           open={open}
-          date={date}
+          date={task.dueDate}
           onConfirm={date => {
             setOpen(false);
-            setDate(date); // Sets the selected date
+            setTask(prevTask => ({
+              ...prevTask,
+              dueDate: date,
+            }));
           }}
           onCancel={() => {
             setOpen(false); // Closes the date picker without setting a date
           }}
         />
         <Text style={styles.selectedDateText}>
-          Selected date: {formateDate(date)}
+          Selected date: {formateDate(task.dueDate)}
         </Text>
       </View>
+      {errors.dueDate ? (
+        <Text style={styles.errors}>{errors.dueDate}</Text>
+      ) : null}
       <View style={styles.radioButtonContainer}>
         <View style={styles.labelContainer}>
           <Text style={{color: 'gray'}}>Task priority</Text>
@@ -138,11 +183,19 @@ const TaskForm: React.FC<TaskFormProps> = () => {
         <View style={styles.inputContainer}>
           <CustomRadioButton
             radioButtons={taskPriorityOptions}
-            onPress={setPriority} // Sets the priority when a radio button is selected
-            selectedId={priority} // Controls the selected radio button
+            onPress={value =>
+              setTask(prevTask => ({
+                ...prevTask,
+                priority: value,
+              }))
+            } // Sets the priority when a radio button is selected
+            selectedId={task.priority} // Controls the selected radio button
           />
         </View>
       </View>
+      {errors.priority ? (
+        <Text style={styles.errors}>{errors.priority}</Text>
+      ) : null}
       <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Add Task</Text>
       </Pressable>
