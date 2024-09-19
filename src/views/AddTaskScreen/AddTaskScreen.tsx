@@ -1,6 +1,9 @@
 import TaskForm from '../../components/TaskForm/TaskForm';
+import Task from '../../types/types';
 
 export default function AddTaskScreen() {
-  const onAddTask = () => {};
-  return <TaskForm onAddTask={onAddTask} />;
-}
+  return <TaskForm   />;
+  };
+
+
+ 

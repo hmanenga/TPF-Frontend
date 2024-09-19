@@ -1,19 +1,15 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, Pressable} from 'react-native';
+import {View, Text, TextInput, Button, Pressable, Alert} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
 import Task from '../../types/types';
 import colors from '../../constants/colors';
 import CustomRadioButton from '../CustomRadioButton/CustomRadioButton';
 import formateDate from '../../utils/helpers';
-/**
- * Props for the TaskForm component.
- * @interface TaskFormProps
- * @property {(task: Task) => void} onAddTask - Callback function to handle adding a task.
- */
-interface TaskFormProps {
-  onAddTask: (task: Task) => void; // Callback function to handle adding a task
-}
+import {getRealm} from '../../databases/realm';
+//import {useNavigation} from '@react-navigation/native';
+import {TASK_SCHEMA} from '../../constants/schemas';
+import uuid from 'react-native-uuid';
 
 /**
  * Options for task priority radio buttons.
@@ -50,7 +46,7 @@ const taskPriorityOptions = [
  *
  * @returns {JSX.Element} - A React component rendering the task input form.
  */
-const TaskForm: React.FC<TaskFormProps> = () => {
+export default function TaskForm() {
   // State variables for task details
   const [task, setTask] = useState({
     id: '',
@@ -66,7 +62,8 @@ const TaskForm: React.FC<TaskFormProps> = () => {
     dueDate: '',
     priority: '',
   });
-
+  const [isLoading, setIsLoading] = useState(false);
+  //const navigation = useNavigation();
   /**
    * Handles form fields changes.
    */
@@ -76,6 +73,7 @@ const TaskForm: React.FC<TaskFormProps> = () => {
       [field]: value,
     }));
   };
+
   /**
    * Handles form submission to create a new task.
    * Resets the input fields upon successful submission.
@@ -109,25 +107,51 @@ const TaskForm: React.FC<TaskFormProps> = () => {
     } else {
       newErrors.priority = '';
     }
+
     if (!task.dueDate) {
       newErrors.dueDate = 'Due date is missing';
     } else {
       newErrors.dueDate = '';
     }
+
     if (Object.values(newErrors).every(error => error === '')) {
       setErrors(newErrors);
-      handleAddTask();
+      addTask();
     } else {
       setErrors(newErrors);
     }
   };
+  /*const handleBack = () => {
+    navigation.goBack();
+  };*/
+  const addTask = async () => {
+    const realm = await getRealm();
+    try {
+      setIsLoading(true);
+      const newTask = {
+        _id: uuid.v4(),
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate,
+        priority: task.priority,
+        completed: false,
+      };
 
-  /**
-   * Handles the addition of a new task.
-   * Constructs a new task object using the input fields and calls the onAddTask prop.
-   * Resets the input fields.
-   */
-  const handleAddTask = () => {};
+      realm.write(() => {
+       const created =  realm.create(TASK_SCHEMA, newTask);
+       console.log("REGISTERED==>",created);
+      });
+
+      Alert.alert('Task added successfully!');
+    } catch (e) {
+      console.error(e);
+
+      Alert.alert('Task not created!');
+    } finally {
+      realm.close();
+      setIsLoading(false);
+    }
+  };
 
   // Render the form UI
   return (
@@ -146,7 +170,7 @@ const TaskForm: React.FC<TaskFormProps> = () => {
         style={styles.input}
       />
       {errors.description ? (
-        <Text style={styles.errors}> {errors.description}</Text>
+        <Text style={styles.errors}>{errors.description}</Text>
       ) : null}
       <Button
         color={colors.primary}
@@ -183,12 +207,13 @@ const TaskForm: React.FC<TaskFormProps> = () => {
         <View style={styles.inputContainer}>
           <CustomRadioButton
             radioButtons={taskPriorityOptions}
-            onPress={value =>
-              setTask(prevTask => ({
-                ...prevTask,
-                priority: value,
-              }))
-            } // Sets the priority when a radio button is selected
+            onPress={
+              value =>
+                setTask(prevTask => ({
+                  ...prevTask,
+                  priority: value,
+                })) // Sets the priority when a radio button is selected
+            }
             selectedId={task.priority} // Controls the selected radio button
           />
         </View>
@@ -201,6 +226,4 @@ const TaskForm: React.FC<TaskFormProps> = () => {
       </Pressable>
     </View>
   );
-};
-
-export default TaskForm;
+}
