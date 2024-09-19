@@ -15,11 +15,31 @@ export default function StackNavigator(): React.JSX.Element {
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="TaskList" component={TaskList} />
-      <Stack.Screen name="AddTaskScreen" component={AddTaskScreen} />
-      <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
+      <Stack.Screen
+        name="RegistrationScreen"
+        component={RegistrationScreen}
+        options={{title: 'User Registration'}}
+      />
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{title: 'Home'}}
+      />
+      <Stack.Screen
+        name="TaskList"
+        component={TaskList}
+        options={{title: 'Task List'}}
+      />
+      <Stack.Screen
+        name="AddTaskScreen"
+        component={AddTaskScreen}
+        options={{title: 'Add Task'}}
+      />
+      <Stack.Screen
+        name="TaskDetailScreen"
+        component={TaskDetailScreen}
+        options={{title: 'Task Details'}}
+      />
     </Stack.Navigator>
   );
 }
