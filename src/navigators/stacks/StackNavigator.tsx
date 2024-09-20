@@ -14,12 +14,12 @@ const Stack = createNativeStackNavigator();
 export default function StackNavigator(): React.JSX.Element {
   return (
     <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen
+       {/* <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen
         name="RegistrationScreen"
         component={RegistrationScreen}
         options={{title: 'User Registration'}}
-      />
+      />  */}
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}

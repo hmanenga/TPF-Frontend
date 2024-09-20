@@ -22,9 +22,6 @@ export default function TaskListItem({task}): JSX.Element {
       <Pressable onPress={handleNavigateToDetails}>
         <Text style={styles.text}>{task.description}</Text>
       </Pressable>
-      <Pressable onPress={handleRemoveTask}>
-      <FontAwesomeIcon name="remove" size={ICON_SIZES.medium} color={colors.iconColor} />
-      </Pressable>
     </View>
   );
 }

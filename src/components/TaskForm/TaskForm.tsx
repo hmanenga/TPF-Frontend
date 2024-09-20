@@ -2,12 +2,11 @@ import React, {useState} from 'react';
 import {View, Text, TextInput, Button, Pressable, Alert} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
-import Task from '../../types/types';
 import colors from '../../constants/colors';
 import CustomRadioButton from '../CustomRadioButton/CustomRadioButton';
 import formateDate from '../../utils/helpers';
 import {getRealm} from '../../databases/realm';
-//import {useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {TASK_SCHEMA} from '../../constants/schemas';
 import uuid from 'react-native-uuid';
 
@@ -63,7 +62,7 @@ export default function TaskForm() {
     priority: '',
   });
   const [isLoading, setIsLoading] = useState(false);
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
   /**
    * Handles form fields changes.
    */
@@ -133,6 +132,7 @@ export default function TaskForm() {
         title: task.title,
         description: task.description,
         dueDate: task.dueDate,
+        created_at: new Date(),
         priority: task.priority,
         completed: false,
       };
@@ -140,18 +140,20 @@ export default function TaskForm() {
       realm.write(() => {
        const created =  realm.create(TASK_SCHEMA, newTask);
        console.log("REGISTERED==>",created);
+       
       });
 
       Alert.alert('Task added successfully!');
+      navigation.goBack();
     } catch (e) {
       console.error(e);
-
       Alert.alert('Task not created!');
     } finally {
       realm.close();
       setIsLoading(false);
     }
   };
+  
 
   // Render the form UI
   return (
