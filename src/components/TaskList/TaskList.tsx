@@ -17,12 +17,19 @@ import colors from '../../constants/colors';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {getRealm} from '../../databases/realm';
 import {TASK_SCHEMA} from '../../constants/schemas';
+import { useSelector, UseSelector } from 'react-redux';
+
+
 
 export default function TaskList() {
   const [tasks, setTasks] = useState(Array<any>);
   const [newTask, setNewTask] = useState('');
   const navigation = useNavigation();
   const [isLoading, setIsLoadingTask] = useState(false);
+  //const {tasks} = useSelector((state:any)=>state.task);
+ 
+  console.log(useSelector((state:any)=>state.task));
+
 
   const fetchTasks = async () => {
     setIsLoadingTask(true);
