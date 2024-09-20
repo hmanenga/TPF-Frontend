@@ -1,6 +1,6 @@
 // Define the Task interface
 export interface Task {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   dueDate: string;
@@ -20,4 +20,5 @@ export interface TaskState {
   tasks: Task[];
   currentTask: Task | null;
   isLoading: boolean;
+  error: string | undefined;
 }

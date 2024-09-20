@@ -12,64 +12,45 @@
 import {View, Text, FlatList, Alert, Button} from 'react-native';
 import TaskListItem from '../TaskListItem/TaskListItem';
 import styles from './styles';
-import {useEffect, useState, useCallback} from 'react';
+import {useEffect, useState} from 'react';
 import colors from '../../constants/colors';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {getRealm} from '../../databases/realm';
-import {TASK_SCHEMA} from '../../constants/schemas';
-import { useSelector, UseSelector } from 'react-redux';
-
-
+import {useNavigation} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {getTasks} from '../../../redux/feature/task/taskSlice';
+import {RootState} from '../../../redux/store';
+import {AppDispatch} from '../../../redux/store';
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState(Array<any>);
-  const [newTask, setNewTask] = useState('');
   const navigation = useNavigation();
-  const [isLoading, setIsLoadingTask] = useState(false);
-  //const {tasks} = useSelector((state:any)=>state.task);
- 
-  console.log(useSelector((state:any)=>state.task));
+  const dispatch = useDispatch<AppDispatch>();
+  const {tasks, isLoading} = useSelector((state: RootState) => state.task);
 
-
-  const fetchTasks = async () => {
-    setIsLoadingTask(true);
-    const realm = await getRealm();
-  
-    try {
-      const response = realm.objects(TASK_SCHEMA).filtered(`completed = false`);
-      setTasks(Array.from(response)); // Convert to plain objects
-    } catch (e) {
-      Alert.alert('Tasks', 'Error fetching tasks');
-    } finally {
-      setIsLoadingTask(false);
-      // Optionally, close the realm if you are managing it manually
-      // realm.close();
-    }
-  };
-  
 
   const handleCreateTask = () => {
     navigation.navigate('AddTaskScreen');
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    dispatch(getTasks());
+  }, [dispatch]);
 
-  // Use focus effect to refetch tasks when the screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      fetchTasks();
-    }, [])
+  const headerComponent = () => (
+    <Text style={styles.listHeadline}>Tasks List</Text>
   );
-  
+  const emptyListComponent = () => <Text>No task found</Text>;
+
+  if (isLoading) {
+    return <Text>Loading tasks...</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.containerTitle}>Tasks List</Text>
       <FlatList
         data={tasks || []}
         contentContainerStyle={{gap: 10}}
+        ListHeaderComponent={headerComponent}
+        ListHeaderComponentStyle={styles.listHeader}
+        ListEmptyComponent={emptyListComponent}
         renderItem={({item}) => <TaskListItem task={item} />}
         keyExtractor={item => item._id}
       />

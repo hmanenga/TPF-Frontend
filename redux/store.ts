@@ -11,3 +11,9 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(logger),
 });
+
+// Create a type for the dispatch function
+export type AppDispatch = typeof store.dispatch;
+
+// Create a type for the root state
+export type RootState = ReturnType<typeof store.getState>;

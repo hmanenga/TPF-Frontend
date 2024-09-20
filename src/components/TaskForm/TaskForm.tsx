@@ -9,7 +9,8 @@ import {getRealm} from '../../databases/realm';
 import {useNavigation} from '@react-navigation/native';
 import {TASK_SCHEMA} from '../../constants/schemas';
 import uuid from 'react-native-uuid';
-
+import { useDispatch, UseDispatch } from 'react-redux';
+import { addTask } from '../../../redux/feature/task/taskSlice';
 /**
  * Options for task priority radio buttons.
  * @constant {Array<{id: string, value: string, label: string}>}
@@ -63,6 +64,7 @@ export default function TaskForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   /**
    * Handles form fields changes.
    */
@@ -78,7 +80,9 @@ export default function TaskForm() {
    * Resets the input fields upon successful submission.
    */
   const handleSubmit = () => {
-    validateFields();
+   // validateFields();
+   dispatch(addTask({task}));
+
   };
 
   /**
@@ -115,7 +119,7 @@ export default function TaskForm() {
 
     if (Object.values(newErrors).every(error => error === '')) {
       setErrors(newErrors);
-      addTask();
+      saveTask();
     } else {
       setErrors(newErrors);
     }
@@ -123,7 +127,7 @@ export default function TaskForm() {
   /*const handleBack = () => {
     navigation.goBack();
   };*/
-  const addTask = async () => {
+  const saveTask = async () => {
     const realm = await getRealm();
     try {
       setIsLoading(true);
