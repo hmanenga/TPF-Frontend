@@ -3,12 +3,14 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {Task, TaskState} from '../../../types/types';
 import {getRealm} from '../../../databases/realm';
 import {TASK_SCHEMA} from '../../../constants/schemas';
+import axios from 'axios';
 
 export const getTasks = createAsyncThunk('task/getTasks', async () => {
   const realm = await getRealm(); // Use await here
 
   try {
-    const response = realm.objects(TASK_SCHEMA).filtered(`completed = false`);
+    const response = realm.objects(TASK_SCHEMA).filtered(`completed = false`)
+      .sorted('created_at',true);
     console.log('RESPONSE FROM REALM==>', response);
     return Array.from(response);
   } catch (e) {
@@ -32,7 +34,7 @@ export const addNewTask = createAsyncThunk(
   async (initialTask: Task) => {
     const realm = await getRealm();
     try {
-      initialTask._id = uuid.v4().toString();
+      initialTask._id = uuid.v4();
       initialTask.completed = false;
       initialTask.created_at = new Date();
       realm.write(() => {
@@ -55,6 +57,19 @@ export const addNewTask = createAsyncThunk(
   },
 );
 
+export const removeTask = createAsyncThunk('tasks/removeTask', async () => {
+
+
+
+
+ /* try {
+    const response = await axios.delete(`${TASKS_URL}/${initialTask._id}`);
+    return response.data;
+  } catch (e) {
+    return e.message;
+  }*/
+});
+
 // Initial state
 const initialState: TaskState = {
   tasks: [],
@@ -66,15 +81,6 @@ const taskSlice = createSlice({
   name: 'task',
   initialState,
   reducers: {
-    removeTask: (state, action) => {
-      const taskId = action.payload;
-      state.tasks = state.tasks.filter(task => task._id !== taskId);
-    },
-    addTask: (state, {payload}) => {
-      const task = payload.task;
-      state.tasks = [...state.tasks, task];
-      state.isLoading = false;
-    },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
@@ -104,5 +110,5 @@ const taskSlice = createSlice({
 });
 
 // Export actions and reducer
-export const {addTask, removeTask, setIsLoading} = taskSlice.actions;
+export const {setIsLoading} = taskSlice.actions;
 export default taskSlice.reducer;

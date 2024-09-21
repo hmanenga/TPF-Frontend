@@ -1,6 +1,6 @@
 // Define the Task interface
 export interface Task {
-  _id: string;
+  _id: string | number[];
   title: string;
   description: string;
   dueDate: Date;
