@@ -122,8 +122,8 @@ export default function TaskForm() {
   const saveTask = async () => {
     try {
       setIsLoading(true);
-      console.log('TASK DATA BEFORE SAVING==>', task);
       dispatch(addNewTask(task));
+      navigation.goBack();
     } catch (e) {
       console.error('failed to save the task', e);
       Alert.alert('Task failed to be saved');
