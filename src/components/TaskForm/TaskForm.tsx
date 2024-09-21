@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Button, Pressable, Alert} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, TextInput, Button, Pressable, Alert,Animated} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
 import colors from '../../constants/colors';
@@ -44,6 +44,7 @@ const taskPriorityOptions = [
  * @returns {JSX.Element} - A React component rendering the task input form.
  */
 export default function TaskForm() {
+  const animation = useRef(new Animated.Value(0)).current;
   // State variables for task details
   const [task, setTask] = useState({
     _id: '',
@@ -62,6 +63,26 @@ export default function TaskForm() {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const animatedStyle = {
+    opacity: animation,
+    transform: [{
+      translateY: animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [50, 0],
+      }),
+    }],
+  };
+
+
   /**
    * Handles form fields changes.
    */
@@ -134,7 +155,7 @@ export default function TaskForm() {
 
   // Render the form UI
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container}>
       <TextInput
         value={task.title}
         onChangeText={handleChange('title')}
@@ -203,6 +224,6 @@ export default function TaskForm() {
       <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Add Task</Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }

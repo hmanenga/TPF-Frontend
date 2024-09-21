@@ -80,4 +80,9 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     padding: 3,
   },
+  noItemText: {
+    color: 'white',
+    alignSelf: 'center',
+    marginBottom: SPACING.small,
+  }
 });
