@@ -3,9 +3,10 @@ export interface Task {
   _id: string;
   title: string;
   description: string;
-  dueDate: string;
+  dueDate: Date;
   priority: string;
-  isCompleted: boolean;
+  completed: boolean;
+  created_at: Date;
 }
 
 // Define the RadioButtonProps interface

@@ -20,7 +20,7 @@ export default function TaskListItem({task}): JSX.Element {
   return (
     <View style={styles.container}>
       <Pressable onPress={handleNavigateToDetails}>
-        <Text style={styles.text}>{task.description}</Text>
+        <Text style={styles.text}>{task?.description}</Text>
       </Pressable>
     </View>
   );

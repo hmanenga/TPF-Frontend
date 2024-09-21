@@ -5,12 +5,9 @@ import DatePicker from 'react-native-date-picker';
 import colors from '../../constants/colors';
 import CustomRadioButton from '../CustomRadioButton/CustomRadioButton';
 import formateDate from '../../utils/helpers';
-import {getRealm} from '../../databases/realm';
 import {useNavigation} from '@react-navigation/native';
-import {TASK_SCHEMA} from '../../constants/schemas';
-import uuid from 'react-native-uuid';
-import { useDispatch, UseDispatch } from 'react-redux';
-import { addTask } from '../../../redux/feature/task/taskSlice';
+import {useDispatch} from 'react-redux';
+import {addNewTask} from '../../redux/feature/task/taskSlice';
 /**
  * Options for task priority radio buttons.
  * @constant {Array<{id: string, value: string, label: string}>}
@@ -49,7 +46,7 @@ const taskPriorityOptions = [
 export default function TaskForm() {
   // State variables for task details
   const [task, setTask] = useState({
-    id: '',
+    _id: '',
     title: '',
     description: '',
     dueDate: new Date(),
@@ -80,9 +77,7 @@ export default function TaskForm() {
    * Resets the input fields upon successful submission.
    */
   const handleSubmit = () => {
-   // validateFields();
-   dispatch(addTask({task}));
-
+    validateFields();
   };
 
   /**
@@ -124,40 +119,18 @@ export default function TaskForm() {
       setErrors(newErrors);
     }
   };
-  /*const handleBack = () => {
-    navigation.goBack();
-  };*/
   const saveTask = async () => {
-    const realm = await getRealm();
     try {
       setIsLoading(true);
-      const newTask = {
-        _id: uuid.v4(),
-        title: task.title,
-        description: task.description,
-        dueDate: task.dueDate,
-        created_at: new Date(),
-        priority: task.priority,
-        completed: false,
-      };
-
-      realm.write(() => {
-       const created =  realm.create(TASK_SCHEMA, newTask);
-       console.log("REGISTERED==>",created);
-       
-      });
-
-      Alert.alert('Task added successfully!');
-      navigation.goBack();
+      console.log('TASK DATA BEFORE SAVING==>', task);
+      dispatch(addNewTask(task));
     } catch (e) {
-      console.error(e);
-      Alert.alert('Task not created!');
+      console.error('failed to save the task', e);
+      Alert.alert('Task failed to be saved');
     } finally {
-      realm.close();
       setIsLoading(false);
     }
   };
-  
 
   // Render the form UI
   return (
