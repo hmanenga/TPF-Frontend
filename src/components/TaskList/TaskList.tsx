@@ -11,6 +11,8 @@ import {getTasks} from '../../redux/feature/task/taskSlice';
 import {RootState} from '../../redux/store';
 import {AppDispatch} from '../../redux/store';
 import {useFocusEffect} from '@react-navigation/native';
+import { deleteTask } from '../../redux/feature/task/taskSlice';
+
 
 const TaskListHeader = () => (
   <Text style={styles.listHeadline}>Tasks List</Text>
@@ -41,6 +43,12 @@ const TaskList: React.FC = () => {
       </View>
     );
   }
+ 
+  const onDelete = (taskId:string) =>{
+    dispatch(deleteTask(taskId));
+  }
+
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -48,7 +56,7 @@ const TaskList: React.FC = () => {
         contentContainerStyle={{gap: 10}}
         ListHeaderComponent={<TaskListHeader />}
         ListEmptyComponent={<TaskListEmpty />}
-        renderItem={({item}) => <TaskListItem task={item} />}
+        renderItem={({item}) => <TaskListItem task={item} onDelete={onDelete} />}
         keyExtractor={item => item?._id}
       />
       <Button

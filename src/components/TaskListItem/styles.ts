@@ -1,20 +1,35 @@
-import { StyleSheet } from "react-native";
-import colors from "../../constants/colors";
-import SPACING from "../../constants/spacing";
-import BORDER_RADIUS from "../../constants/borderRadius";
-import FONT_SIZES from "../../constants/fontSizes";
- 
+import {StyleSheet} from 'react-native';
+import colors from '../../constants/colors';
+import SPACING from '../../constants/spacing';
+import BORDER_RADIUS from '../../constants/borderRadius';
+import FONT_SIZES from '../../constants/fontSizes';
 
 export default StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: colors.primary,
-        padding: SPACING.small,
-        borderRadius: BORDER_RADIUS.small,
-    },
-    text: { 
-        color: colors.textPrimary,
-        fontSize: FONT_SIZES.medium
-    }
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.primary,
+    padding: SPACING.small,
+    borderRadius: BORDER_RADIUS.small,
+  },
+  text: {
+    color: colors.textPrimary,
+    fontSize: FONT_SIZES.medium,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+  },
+  deleteButton: {
+    width: 100,
+    height: '100%',
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    right: -100,
+  },
+  deleteButtonText: {
+    color:'white',
+    fontWeight: 'bold',
+  },
 });

@@ -9,8 +9,10 @@ export const getTasks = createAsyncThunk('task/getTasks', async () => {
   const realm = await getRealm(); // Use await here
 
   try {
-    const response = realm.objects(TASK_SCHEMA).filtered(`completed = false`)
-      .sorted('created_at',true);
+    const response = realm
+      .objects(TASK_SCHEMA)
+      .filtered(`completed = false`)
+      .sorted('created_at', true);
     console.log('RESPONSE FROM REALM==>', response);
     return Array.from(response);
   } catch (e) {
@@ -42,8 +44,6 @@ export const addNewTask = createAsyncThunk(
       });
     } catch (e) {
       console.error(e);
-    } finally {
-      //realm.close();
     }
 
     //To add data to remote API
@@ -57,12 +57,20 @@ export const addNewTask = createAsyncThunk(
   },
 );
 
-export const removeTask = createAsyncThunk('tasks/removeTask', async () => {
+export const deleteTask = createAsyncThunk('tasks/deleteTask', async taskId => {
+  const realm = await getRealm();
+  try {
+    const taskSelected = realm
+      .objects(TASK_SCHEMA)
+      .filtered(`_id='${taskId}'`)[0];
+    realm.write(() => {
+      realm.delete(taskSelected);
+    });
+  } catch (e) {
+    return e.message;
+  }
 
-
-
-
- /* try {
+  /* try {
     const response = await axios.delete(`${TASKS_URL}/${initialTask._id}`);
     return response.data;
   } catch (e) {
