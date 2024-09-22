@@ -6,11 +6,14 @@
  */
 import {View} from 'react-native';
 import TaskList from '../../components/TaskList/TaskList';
-
+import DateTime from '../../components/weatherComponents/DateTime/DateTime';
+import WeatherScroll from '../../components/weatherComponents/WeatherScroll/WeatherScroll';
 
 export default function HomeScreen() {
   return (
     <View style={{padding: 10}}>
+      <DateTime />
+      <WeatherScroll />
       <TaskList />
     </View>
   );
