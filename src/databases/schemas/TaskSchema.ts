@@ -2,6 +2,7 @@ export const TaskSchema ={
   name: "Task",
   properties: {
     _id: "string",
+    title: "string",
     description: "string",
     dueDate: "date",
     created_at: "date",

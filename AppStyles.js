@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {Dimensions} from 'react-native';
-import colors from './src/constants/colors';
+import { STANDARD_FLEX } from './src/config/constants';
+
 
 export default StyleSheet.create({
   container: {
@@ -8,7 +8,7 @@ export default StyleSheet.create({
     padding: 10,
   },
   linearGradient: {
-    flex: 1,
+    flex: STANDARD_FLEX,
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 5

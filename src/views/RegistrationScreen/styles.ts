@@ -1,22 +1,22 @@
 import {StyleSheet} from 'react-native';
-import SPACING from '../../constants/spacing';
-import colors from '../../constants/colors';
-import BORDER_RADIUS from '../../constants/borderRadius';
-import FONT_SIZES from '../../constants/fontSizes';
+import { STANDARD_FLEX, STANDARD_SPACING_SM } from '../../config/constants';
+import { LightThemeColors } from '../../config/colors';
+import { STANDARD_BORDER_RADIUS } from '../../config/constants';
+import { FONT_SIZE_LG, FONT_SIZE_MD, FONT_SIZE_SM } from '../../config/constants';
 
 export default StyleSheet.create({
   formContainer: {
     justifyContent: 'center',
-    padding: SPACING.medium,
-    backgroundColor: colors.white,
+    padding: STANDARD_SPACING_SM,
+    backgroundColor: LightThemeColors.white,
   },
   inputContainer: {
     flexDirection: 'row',
-    borderRadius: BORDER_RADIUS.xlarge,
-    backgroundColor: colors.white,
+    borderRadius: STANDARD_BORDER_RADIUS,
+    backgroundColor: LightThemeColors.white,
     elevation: 10,
-    marginVertical: SPACING.medium,
-    padding: SPACING.xsmall,
+    marginVertical: STANDARD_SPACING_SM,
+    padding: STANDARD_SPACING_SM,
     height: 50,
     alignItems: 'center',
   },
@@ -46,31 +46,31 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     color: '#262626',
-    marginBottom: SPACING.medium,
+    marginBottom: STANDARD_SPACING_SM,
   },
   inputIcon: {
-    marginLeft: SPACING.small,
-    marginRight: SPACING.xsmall,
+    marginLeft: STANDARD_SPACING_SM,
+    marginRight: STANDARD_SPACING_SM,
   },
   textInput: {
-    flex: 1,
+    flex: STANDARD_FLEX,
   },
   forgotPasswordText: {
-    color: colors.primary,
+    color: LightThemeColors.primary,
     textAlign: 'right',
     width: '90%',
-    fontSize: FONT_SIZES.medium,
+    fontSize: FONT_SIZE_MD,
   },
   signInButtonContainer: {
     flexDirection: 'row',
     gap: 5,
-    marginVertical: SPACING.large,
+    marginVertical: STANDARD_SPACING_SM,
     justifyContent: 'flex-end',
     width: '90%',
   },
   signIn: {
     color: '#262626',
-    fontSize: FONT_SIZES.xlarge,
+    fontSize: FONT_SIZE_LG,
     fontWeight: 'bold',
   },
   linearGradient: {
@@ -82,26 +82,26 @@ export default StyleSheet.create({
     marginHorizontal: 10,
   },
   createAccountLink: {
-    marginTop: SPACING.xlarge,
+    marginTop: STANDARD_SPACING_SM,
     alignSelf: 'center',
-    color: colors.primary,
-    fontSize: FONT_SIZES.medium,
+    color: LightThemeColors.primary,
+    fontSize: FONT_SIZE_MD,
   },
   createText: {
     textDecorationLine: 'underline',
   },
   screenTitleContainer: {
-        backgroundColor: colors.primary,
-        borderRadius: BORDER_RADIUS.large, //,
-        padding: SPACING.xsmall,
+        backgroundColor: LightThemeColors.primary,
+        borderRadius: STANDARD_BORDER_RADIUS, //,
+        padding: STANDARD_SPACING_SM,
         alignContent: 'center',
         width: '80%',
         alignSelf: 'center'
   },
   screenTitle: {
-    fontSize: FONT_SIZES.large,
+    fontSize: FONT_SIZE_LG,
     fontWeight: 'bold',
-    color: colors.white,
+    color: LightThemeColors.white,
     textAlign: 'center',
   }
 });

@@ -1,23 +1,23 @@
+
 import {StyleSheet} from 'react-native';
-import SPACING from '../../constants/spacing';
-import colors from '../../constants/colors';
-import BORDER_RADIUS from '../../constants/borderRadius';
-import FONT_SIZES from '../../constants/fontSizes';
+import { LightThemeColors } from '../../config/colors';
+import { FONT_SIZE_LG, FONT_SIZE_MD, STANDARD_BORDER_RADIUS, STANDARD_FLEX, STANDARD_SPACING_LG, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from '../../config/constants';
+
 
 export default StyleSheet.create({
   formContainer: {
-    flex: 1,
+    flex: STANDARD_FLEX,
     justifyContent: 'center',
-    padding: SPACING.medium,
-    backgroundColor: colors.white,
+    padding: STANDARD_SPACING_SM,
+    backgroundColor: LightThemeColors.white,
   },
   inputContainer: {
     flexDirection: 'row',
-    borderRadius: BORDER_RADIUS.xlarge,
-    backgroundColor: colors.white,
+    borderRadius: STANDARD_BORDER_RADIUS,
+    backgroundColor: LightThemeColors.white,
     elevation: 10,
-    marginVertical: SPACING.medium,
-    padding: SPACING.xsmall,
+    marginVertical: STANDARD_SPACING_MD,
+    padding: STANDARD_SPACING_SM,
     height: 50,
     alignItems: 'center',
   },
@@ -47,20 +47,20 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     color: '#262626',
-    marginBottom: SPACING.medium,
+    marginBottom: STANDARD_SPACING_MD,
   },
   inputIcon: {
-    marginLeft: SPACING.small,
-    marginRight: SPACING.xsmall,
+    marginLeft: STANDARD_SPACING_SM,
+    marginRight: STANDARD_SPACING_SM,
   },
   textInput: {
-    flex: 1,
+    flex: STANDARD_FLEX,
   },
   forgotPasswordText: {
-    color: colors.primary,
+    color: LightThemeColors.primary,
     textAlign: 'right',
     width: '90%',
-    fontSize: FONT_SIZES.medium,
+    fontSize: FONT_SIZE_MD,
   },
   signInButtonContainer: {
     flexDirection: 'row',
@@ -71,7 +71,7 @@ export default StyleSheet.create({
   },
   signIn: {
     color: '#262626',
-    fontSize: FONT_SIZES.xlarge,
+    fontSize: FONT_SIZE_LG,
     fontWeight: 'bold',
   },
   linearGradient: {
@@ -83,10 +83,10 @@ export default StyleSheet.create({
     marginHorizontal: 10,
   },
   createAccountLink: {
-    marginTop: SPACING.xlarge,
+    marginTop: STANDARD_SPACING_LG,
     alignSelf: 'center',
-    color: colors.primary,
-    fontSize: FONT_SIZES.medium,
+    color: LightThemeColors.primary,
+    fontSize: FONT_SIZE_MD,
   },
   createText: {
     textDecorationLine: 'underline',

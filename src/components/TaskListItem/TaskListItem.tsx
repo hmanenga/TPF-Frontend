@@ -1,68 +1,115 @@
+import React, { useRef } from 'react';
 import {
   View,
   Text,
-  Pressable,
   PanResponder,
   TouchableOpacity,
   Animated,
+  Alert,
 } from 'react-native';
-import styles from './styles';
-import Task from '../../types/types';
-import {useNavigation} from '@react-navigation/native';
-import { useRef } from 'react';
+import styles, { createDynamicContentStyle } from './styles';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {  ICON_SIZE_XS, STANDARD_BORDER_RADIUS, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from '../../config/constants';
+import { RootStackParamList, Task } from '../../types/types';
+import { formateText } from '../../utils/helpers';
+import { LightThemeColors } from '../../config/colors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function TaskListItem({task, onDelete}): JSX.Element {
-  const translateX =useRef( new Animated.Value(0)).current;
-  const navigation = useNavigation(); // Get the navigation object
-  const panResponder = useRef(PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, gestureState) => {
-        if(gestureState.dx <0){
+
+interface TaskListItemProps {
+  task: Task;
+  onDelete: (id: string) => void;
+}
+
+// Vertical line component
+const VerticalLine = () => <View style={styles.verticalLine} />;
+
+// Task Description component
+const TaskDescription: React.FC<{ task: Task }> = ({ task }) => (
+  <View style={styles.taskInfo}>
+    <Text style={styles.text}>{formateText(task?.description)}</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Icon name="schedule" size={ICON_SIZE_XS} />
+      <Text style={styles.subText}>{task.dueDate.toLocaleDateString()}</Text>
+    </View>
+  </View>
+);
+
+// Task Priority component
+const TaskPriorityAndEdit: React.FC<{ task: Task }> = ({ task }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const handleNavigateToEditTask = () => navigation.navigate('AddTaskScreen',{taskId:task._id.toString()});
+  return (
+    <View style={styles.priority}>
+     {/*  <Icon name="priority-high" size={ICON_SIZE_MD} />*/}
+      <TouchableOpacity onPress={handleNavigateToEditTask}>
+        <Text style={styles.editText}>edit</Text>
+      </TouchableOpacity>
+      <Text>{task.priority}</Text>
+    </View>
+  );
+} 
+  
+  
+  
+
+// Main Task Info component
+const TaskInfo: React.FC<{ task: Task; panHandlers: any }> = ({ task, panHandlers }) => (
+  <View style={styles.info} {...panHandlers}>
+    <View style={{ flexDirection: 'row' }}>
+      <VerticalLine />
+      <TaskDescription task={task} />
+    </View>
+    <TaskPriorityAndEdit task={task} />
+  </View>
+);
+
+// Delete button component
+const DeleteButton: React.FC<{ onPress: () => void }> = ({ onPress }) => (
+  <TouchableOpacity style={styles.deleteButton} onPress={onPress}>
+    <Text style={styles.deleteButtonText}>delete</Text>
+  </TouchableOpacity>
+);
+
+// Main TaskListItem component
+const TaskListItem: React.FC<TaskListItemProps> = ({ task, onDelete }) => {
+  const translateX = useRef(new Animated.Value(0)).current;
+ 
+  
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dx < 0) {
           translateX.setValue(gestureState.dx);
         }
-
-    },
-    onPanResponderRelease: (_, gestureState) => {
-      if (gestureState.dx < -50) {
-        Animated.spring(translateX,{
-          toValue: -100,
-          useNativeDriver: true
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const toValue = gestureState.dx < -50 ? -100 : 0;
+        Animated.spring(translateX, {
+          toValue,
+          useNativeDriver: true,
         }).start();
-      }else{
-        Animated.spring(translateX,{
-          toValue: 0,
-          useNativeDriver: true
-        }).start();
-      }
-    },
-  })).current;
-
-  const handleNavigateToDetails = () => {
-    // Navigate to the TaskDetailScreen with the task object as a prop
-    navigation.navigate('TaskDetailScreen', {task: task});
-  };
+      },
+    })
+  ).current;
 
   const handleRemoveTask = () => {
-    console.warn('Task removed from TaskListItem');
+    onDelete(task._id.toString());
   };
+  
+ 
+
   return (
     <View style={styles.itemContainer}>
-      <Animated.View style={{
-        flex:1,
-        transform: [{translateX: translateX}]
-      }}>
-        <View style={styles.container} {...panResponder.panHandlers}>
-          <Pressable onPress={handleNavigateToDetails}>
-            <Text style={styles.text}>{task?.description}</Text>
-          </Pressable>
-        </View>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => onDelete(task._id)}>
-          <Text style={styles.deleteButtonText}>delete</Text>
-        </TouchableOpacity>
+      <Animated.View style={createDynamicContentStyle(translateX)}>
+        <TaskInfo task={task} panHandlers={panResponder.panHandlers} />
+        <DeleteButton onPress={handleRemoveTask} />
       </Animated.View>
     </View>
   );
-}
+};
+
+export default TaskListItem;

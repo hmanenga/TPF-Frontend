@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import RadioGroup from 'react-native-radio-buttons-group';
 import  RadioButtonProps  from '../../types/types'; // Adjust the import based on your file structure
+import { LightThemeColors } from '../../config/colors';
 
 interface CustomRadioButtonProps {
   radioButtons: RadioButtonProps[]; // Array of radio button options
@@ -22,7 +23,7 @@ export default function CustomRadioButton({
   return (
     <View style={containerStyle}>
       <RadioGroup
-        labelStyle={{color: 'white'}}
+        labelStyle={{color: LightThemeColors.text}}
         radioButtons={radioButtons}
         onPress={onPress}
         selectedId={selectedId}

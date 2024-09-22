@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
-import SPACING from "../../constants/spacing";
+import { STANDARD_SPACING_MD } from "../../config/constants";
+ 
 
 
 export default StyleSheet.create({
     formContainer: {
-      padding: SPACING.medium,
+      padding: STANDARD_SPACING_MD,
     },
     input: {
       height: 40,

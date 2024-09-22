@@ -1,51 +1,40 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, TextInput, Button, Pressable, Alert,Animated} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Animated,
+  Alert,
+} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
-import colors from '../../constants/colors';
+import { LightThemeColors } from '../../config/colors';
 import CustomRadioButton from '../CustomRadioButton/CustomRadioButton';
-import formateDate from '../../utils/helpers';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {addNewTask} from '../../redux/feature/task/taskSlice';
-/**
- * Options for task priority radio buttons.
- * @constant {Array<{id: string, value: string, label: string}>}
- */
-const taskPriorityOptions = [
-  {
-    id: '1',
-    value: 'High',
-    label: 'High',
-    borderColor: colors.white,
-    color: colors.white,
-    selected: true,
-  },
-  {
-    id: '2',
-    value: 'Medium',
-    label: 'Medium',
-    borderColor: colors.white,
-    color: colors.white,
-  },
-  {
-    id: '3',
-    value: 'Low',
-    label: 'Low',
-    borderColor: colors.white,
-    color: colors.white,
-  },
-];
+import { formateDate } from '../../utils/helpers';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNewTask, getTask, resetTask } from '../../redux/feature/task/taskSlice';
+import CustomButton from '../CustomButton/CustomButton';
+import { TASK_PRIORITY_OPTIONS } from '../../config/constants';
+import { RootState } from '../../redux/store';
+import { Task } from '../../types/types';
+import { updateTaskData } from '../../redux/feature/task/taskSlice';
+ 
 
 /**
- * TaskForm is a React component that provides a form for adding new tasks.
- * It allows users to input task details including title, description, due date, and priority.
- *
- * @returns {JSX.Element} - A React component rendering the task input form.
+ * TaskForm component for adding/editing tasks.
+ * @param {Object} route - Route parameters including task ID.
+ * @returns {JSX.Element}
  */
-export default function TaskForm() {
+export default function TaskForm({ route }) {
   const animation = useRef(new Animated.Value(0)).current;
-  // State variables for task details
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  
+  const { currentTask } = useSelector((state: RootState) => state.task);
+  const taskId = route?.params;
+
+  // State variables for task details and validation
   const [task, setTask] = useState({
     _id: '',
     title: '',
@@ -53,24 +42,39 @@ export default function TaskForm() {
     dueDate: new Date(),
     priority: '',
   });
-  const [open, setOpen] = useState(false); // Controls the visibility of the date picker
-  const [errors, setErrors] = useState({
-    title: '',
-    description: '',
-    dueDate: '',
-    priority: '',
-  });
+  
+  const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   useEffect(() => {
+    if (currentTask) {
+      setTask({
+        _id: currentTask._id.toString(),
+        title: currentTask.title,
+        description: currentTask.description,
+        dueDate: currentTask.dueDate,
+        priority: currentTask.priority,
+      });
+    }
+  }, [currentTask]);
+  
+
+  useEffect(() => {
+    if (taskId) {
+      dispatch(getTask(taskId));
+    }
+
     Animated.timing(animation, {
       toValue: 1,
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, []);
+
+    return () => {
+      dispatch(resetTask());
+    };
+  }, [dispatch, taskId]);
 
   const animatedStyle = {
     opacity: animation,
@@ -82,148 +86,121 @@ export default function TaskForm() {
     }],
   };
 
-
-  /**
-   * Handles form fields changes.
-   */
-  const handleChange = (field: 'title' | 'description') => (value: string) => {
-    setTask(prevTask => ({
-      ...prevTask,
-      [field]: value,
-    }));
+  const handleChange = (field) => (value) => {
+    setTask(prev => ({ ...prev, [field]: value }));
   };
 
-  /**
-   * Handles form submission to create a new task.
-   * Resets the input fields upon successful submission.
-   */
   const handleSubmit = () => {
-    validateFields();
+    if (validateFields()) {
+      if (taskId) {
+        updateTask();
+      } else {
+        saveTask();
+      }
+    }
   };
 
-  /**
-   * Validates the input fields of the task form.
-   * Sets error messages for empty fields and updates the errors state.
-   * If all fields are valid, calls the handleAddTask function.
-   */
   const validateFields = () => {
-    const newErrors = {title: '', description: '', dueDate: '', priority: ''};
+    const newErrors: Partial<Task> = {};
+    if (!task.title.trim()) newErrors.title = 'Title is required';
+    if (!task.description.trim()) newErrors.description = 'Description is required';
+    if (!task.priority.trim()) newErrors.priority = 'Priority is required';
+    if (!task.dueDate) newErrors.dueDate = 'Due date is required';
 
-    if (!task.title.trim()) {
-      newErrors.title = 'Title is missing';
-    } else {
-      newErrors.title = '';
-    }
-
-    if (!task.description.trim()) {
-      newErrors.description = 'Description is missing';
-    } else {
-      newErrors.description = '';
-    }
-
-    if (!task.priority.trim()) {
-      newErrors.priority = 'Priority is missing';
-    } else {
-      newErrors.priority = '';
-    }
-
-    if (!task.dueDate) {
-      newErrors.dueDate = 'Due date is missing';
-    } else {
-      newErrors.dueDate = '';
-    }
-
-    if (Object.values(newErrors).every(error => error === '')) {
-      setErrors(newErrors);
-      saveTask();
-    } else {
-      setErrors(newErrors);
-    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
   const saveTask = async () => {
     try {
-      setIsLoading(true);
-      dispatch(addNewTask(task));
+       dispatch(addNewTask(task));
       navigation.goBack();
-    } catch (e) {
-      console.error('failed to save the task', e);
-      Alert.alert('Task failed to be saved');
-    } finally {
-      setIsLoading(false);
+      Alert.alert('Sucsess','Task saved successfully');
+    } catch (error) {
+      console.error('Failed to save the task:', error);
+      Alert.alert('Error', 'Failed to save the task');
     }
   };
 
-  // Render the form UI
+  const updateTask = async () => {
+    try {
+      dispatch(updateTaskData(task));
+      navigation.goBack();
+      Alert.alert('Sucsess','Task updated successfully');
+    } catch (error) {
+      console.error('Failed to update the task:', error);
+      Alert.alert('Error', 'Failed to update the task');
+    }
+  }
+
   return (
-    <Animated.View style={styles.container}>
+    <Animated.View style={[styles.container, animatedStyle]}>
+      <Text style={styles.title}>New Task</Text>
+
       <TextInput
         value={task.title}
         onChangeText={handleChange('title')}
         placeholder="Title"
         style={styles.input}
       />
-      {errors.title ? <Text style={styles.errors}>{errors.title}</Text> : null}
+      {errors.title && <Text style={styles.errors}>{errors.title}</Text>}
+
       <TextInput
         value={task.description}
         onChangeText={handleChange('description')}
         placeholder="Description"
         style={styles.input}
       />
-      {errors.description ? (
-        <Text style={styles.errors}>{errors.description}</Text>
-      ) : null}
-      <Button
-        color={colors.primary}
-        title="Pick due date"
-        onPress={() => setOpen(true)} // Opens the date picker
+      {errors.description && <Text style={styles.errors}>{errors.description}</Text>}
+
+      <CustomButton
+        title="Pick Due Date"
+        variant="outline"
+        onPress={() => setOpen(true)}
       />
       <View style={styles.datePickerContainer}>
         <DatePicker
           modal
           open={open}
           date={task.dueDate}
-          onConfirm={date => {
+          onConfirm={(date) => {
             setOpen(false);
-            setTask(prevTask => ({
-              ...prevTask,
-              dueDate: date,
-            }));
+            setTask(prev => ({ ...prev, dueDate: date }));
           }}
-          onCancel={() => {
-            setOpen(false); // Closes the date picker without setting a date
-          }}
+          onCancel={() => setOpen(false)}
         />
         <Text style={styles.selectedDateText}>
-          Selected date: {formateDate(task.dueDate)}
+          selected date: {formateDate(task.dueDate)}
         </Text>
       </View>
-      {errors.dueDate ? (
-        <Text style={styles.errors}>{errors.dueDate}</Text>
-      ) : null}
+      {errors.dueDate && <Text style={styles.errors}>{errors.dueDate}</Text>}
+
       <View style={styles.radioButtonContainer}>
         <View style={styles.labelContainer}>
-          <Text style={{color: 'gray'}}>Task priority</Text>
+          <Text style={{color: LightThemeColors.text}}>Task priority</Text>
         </View>
         <View style={styles.inputContainer}>
           <CustomRadioButton
-            radioButtons={taskPriorityOptions}
+            radioButtons={TASK_PRIORITY_OPTIONS}
             onPress={
+              // Sets the priority when a radio button is selected
               value =>
                 setTask(prevTask => ({
                   ...prevTask,
                   priority: value,
-                })) // Sets the priority when a radio button is selected
+                })) 
             }
-            selectedId={task.priority} // Controls the selected radio button
+            selectedId={task.priority} 
           />
         </View>
       </View>
-      {errors.priority ? (
-        <Text style={styles.errors}>{errors.priority}</Text>
-      ) : null}
-      <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Add Task</Text>
-      </Pressable>
+      {errors.priority && <Text style={styles.errors}>{errors.priority}</Text>}
+      <CustomButton
+        title={currentTask ? 'Edit Task' : 'Add Task'}
+        variant="primary"
+        onPress={handleSubmit}
+        disabled={isLoading}
+      />
     </Animated.View>
   );
 }

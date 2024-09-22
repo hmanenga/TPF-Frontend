@@ -13,7 +13,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from './styles';
 import ICON_SIZES from '../../constants/iconSizes';
-import colors from '../../constants/colors';
+import { LightThemeColors } from '../../config/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 
@@ -46,7 +46,7 @@ export default function LoginScreen() {
           <FontAwesome
             name={'user'}
             size={ICON_SIZES.medium}
-            color={colors.gray}
+            color={LightThemeColors.gray}
           />
           <TextInput
             style={styles.textInput}
@@ -65,7 +65,7 @@ export default function LoginScreen() {
             style={styles.inputIcon}
             name={'locked'}
             size={ICON_SIZES.medium}
-            color={colors.gray}
+            color={LightThemeColors.gray}
           />
           <TextInput
             style={styles.textInput}
@@ -83,11 +83,11 @@ export default function LoginScreen() {
         <View style={styles.signInButtonContainer}>
           <Text style={styles.signIn}>Sign in</Text>
           <LinearGradient
-            colors={[colors.primary, 'green']}
+            colors={[LightThemeColors.primary, 'green']}
             style={styles.linearGradient}>
             <AntDesign
               name={'arrowright'}
-              color={colors.white}
+              color={LightThemeColors.white}
               size={ICON_SIZES.medium}
             />
           </LinearGradient>

@@ -23,3 +23,7 @@ export interface TaskState {
   isLoading: boolean;
   error: string | undefined;
 }
+
+export type RootStackParamList = {
+  AddTaskScreen: { taskId: string };
+};

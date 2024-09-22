@@ -1,52 +1,50 @@
+import { FONT_SIZE_MD, FONT_SIZE_SM, STANDARD_FLEX, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from './../../config/constants';
 import {StyleSheet} from 'react-native';
-import SPACING from '../../constants/spacing';
-import colors from '../../constants/colors';
-import FONT_SIZES from '../../constants/fontSizes';
+import { LightThemeColors } from '../../config/colors';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import BORDER_RADIUS from '../../constants/borderRadius';
+import { FONT_SIZE_LG, STANDARD_BORDER_RADIUS } from '../../config/constants';
 
 export default StyleSheet.create({
   container: {
-    backgroundColor: colors.secondary,
-    padding: SPACING.small,
-    borderRadius: BORDER_RADIUS.small,
+    padding: STANDARD_SPACING_SM,
+    borderRadius: STANDARD_BORDER_RADIUS,
   },
   containerTitle: {
-    fontSize: FONT_SIZES.large,
-    color: Colors.white,
-    padding: SPACING.small,
-    marginVertical: SPACING.small,
+    fontSize: FONT_SIZE_LG,
+    color: LightThemeColors.white,
+    padding: STANDARD_SPACING_SM,
+    marginVertical: STANDARD_SPACING_SM,
   },
   taskInput: {
-    color: colors.gray,
-    padding: SPACING.xsmall,
-    backgroundColor: colors.white,
-    borderRadius: BORDER_RADIUS.small,
-    marginBottom: SPACING.small,
-    marginTop: SPACING.medium,
+    color: LightThemeColors.gray,
+    padding: STANDARD_SPACING_SM,
+    backgroundColor: LightThemeColors.white,
+    borderRadius: STANDARD_BORDER_RADIUS,
+    marginBottom: STANDARD_SPACING_SM,
+    marginTop: STANDARD_SPACING_MD,
   },
   listHeader: {
-    height: 55,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    borderBottomWidth: 1,
     borderBottomColor: '#7B52AB',
+    fontWeight: 'bold',
+    fontSize: FONT_SIZE_SM,
+    color: LightThemeColors.primary
   },
   listHeadline: {
-    color: '#fff',
+    color: LightThemeColors.text,
     fontWeight: 'bold',
     fontSize: 21,
   },
   loadingContainer: { // Add this style
-    flex: 1,
+    flex: STANDARD_FLEX,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: LightThemeColors.background,
   },
   row: {
     flexDirection: 'row',
-    flex: 1,
+    flex: STANDARD_FLEX,
     alignItems: 'center',
     paddingLeft: 5,
     backgroundColor: '#efefef',
@@ -55,7 +53,7 @@ export default StyleSheet.create({
   },
   swipedRow: {
     flexDirection: 'row',
-    flex: 1,
+    flex: STANDARD_FLEX,
     alignItems: 'center',
     paddingLeft: 5,
     backgroundColor: '#818181',
@@ -63,7 +61,7 @@ export default StyleSheet.create({
     minHeight: 50,
   },
   swipedConfirmationContainer: {
-    flex: 1,
+    flex: STANDARD_FLEX,
   },
   deleteConfirmationText: {
     color: '#fcfcfc',
@@ -81,8 +79,15 @@ export default StyleSheet.create({
     padding: 3,
   },
   noItemText: {
-    color: 'white',
+    color: LightThemeColors.text,
     alignSelf: 'center',
-    marginBottom: SPACING.small,
+    marginBottom: STANDARD_SPACING_SM,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    marginTop: 20
   }
 });
