@@ -61,16 +61,17 @@ export default StyleSheet.create({
   },
   verticalLine: {
     height: '100%',
-    backgroundColor: LightThemeColors.primary,
+    backgroundColor: '#c70284',
     padding: 3,
     marginRight: 6,
   },
-  taskInfo: {flexDirection: 'column', alignItems: 'start', gap: 10},
+  taskInfo: {flexDirection: 'column', alignItems: 'flex-start', gap: 10},
   priority: {flexDirection: 'column', gap: 10, alignItems: 'center'},
   editText: {
     color: LightThemeColors.white,
-    backgroundColor: 'gray',
+    backgroundColor: '#c70284',
     borderRadius: STANDARD_BORDER_RADIUS,
     padding: STANDARD_SPACING_MD,
+    textAlign: 'center',
   },
 });

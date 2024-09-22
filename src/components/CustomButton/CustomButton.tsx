@@ -41,7 +41,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       style={[styles.container, buttonStyle.button, style]}
     >
       {isLoading ? (
-        <Load />
+        <Load size='small'/>
       ) : (
         <View style={styles.content}>
           {iconName && (

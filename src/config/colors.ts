@@ -2,8 +2,8 @@
 
 // Light Theme Colors
 const LightThemeColors = {
-    primary: '#345995', // Primary color for light theme
-    secondary: '#C7BCDB', // Secondary color for light theme
+    primary: '#38BDF8', // Primary color for light theme
+    secondary: '#0284C7', // Secondary color for light theme
     textHighContrast: '#0b2239', // High contrast text color
     textLowContrast: '#868EAE', // Low contrast text color
     error:'red',

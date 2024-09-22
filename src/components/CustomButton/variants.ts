@@ -4,7 +4,7 @@ import { LightThemeColors } from "../../config/colors";
 const buttonPrimary = {
     enabled: {
       button: {
-        backgroundColor: '#228B22',
+        backgroundColor: LightThemeColors.secondary,
       },
       title: {
         color: "#FFF",

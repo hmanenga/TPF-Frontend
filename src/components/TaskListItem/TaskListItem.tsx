@@ -5,15 +5,13 @@ import {
   PanResponder,
   TouchableOpacity,
   Animated,
-  Alert,
 } from 'react-native';
 import styles, { createDynamicContentStyle } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {  ICON_SIZE_XS, STANDARD_BORDER_RADIUS, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from '../../config/constants';
+import {  ICON_SIZE_XS } from '../../config/constants';
 import { RootStackParamList, Task } from '../../types/types';
 import { formateText } from '../../utils/helpers';
-import { LightThemeColors } from '../../config/colors';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
@@ -42,7 +40,6 @@ const TaskPriorityAndEdit: React.FC<{ task: Task }> = ({ task }) => {
   const handleNavigateToEditTask = () => navigation.navigate('AddTaskScreen',{taskId:task._id.toString()});
   return (
     <View style={styles.priority}>
-     {/*  <Icon name="priority-high" size={ICON_SIZE_MD} />*/}
       <TouchableOpacity onPress={handleNavigateToEditTask}>
         <Text style={styles.editText}>edit</Text>
       </TouchableOpacity>
