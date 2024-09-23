@@ -1,57 +1,43 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image} from 'react-native';
+import {styles} from './styles';
+import useFetchWeatherData from '../../../hooks/useFetchWeatherData';
+import moment from 'moment-timezone';
+import { Load } from '../../Load/Load';
 
 const FutureForecast = () => {
+  const {data} = useFetchWeatherData();
+
+  if (!data) {
+    return <Load size="medium" />;
+  }
+  console.log('WEATHER DATA FOR NEXT 7 DAYS',data.daily);
   return (
     <View style={{flexDirection: 'row'}}>
-      <FutureForecastItem />
-      <FutureForecastItem />
-      <FutureForecastItem />
-      <FutureForecastItem />
+      {data && data.daily.length > 0
+        ? data.daily.map((forecastItem:any, index: number) =>( <FutureForecastItem key={forecastItem.dt} forecastItem={forecastItem} />))
+        : <View/>}
     </View>
   );
 };
 
-const FutureForecastItem = () => {
-  return (
+const FutureForecastItem = (forecastItem: any) => {
+    //const img ={uri: `http://openweathermap.org/img/wn/${forecastItem.weather[0].icon}@2x.png`};
+   // const img ={uri: `http://openweathermap.org/img/wn/${forecastItem.weather[0].icon}@2x.png`}
+   if(!forecastItem){
+    return <Load size='medium'/>
+   }
+  
+   return (
     <View style={styles.futureForecastItemContainer}>
-      <Text style={styles.day}>Mon</Text>
+      <Text style={styles.day}>{moment(forecastItem.dt).format('ddd')}</Text>
       <Image
         style={styles.itemImage}
         source={require('../../../../assets/images/weatherCloud.png')}
       />
-      <Text style={styles.text}>Night-26&#176;C</Text>
-      <Text style={styles.text}>Day-36&#176;C</Text>
+      <Text style={styles.text}>Night-{forecastItem.temp?.night}</Text>
+      <Text style={styles.text}>Day-{forecastItem.temp?.day}</Text>
     </View>
   );
 };
 export default FutureForecast;
-
-const styles = StyleSheet.create({
-    futureForecastItemContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#00000033',
-        borderRadius: 10,
-        borderColor: '#eee',
-        borderWidth: 1,
-        padding: 20,
-        marginLeft: 10
-    },
-  itemImage: {
-    width: 100,
-    height: 100,
-  },
-  day: {
-    fontSize: 20,
-    color: 'white',
-    backgroundColor: '#3c3c44',
-    padding: 10,
-    borderRadius: 50,
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  text: {
-    color: '#eee'
-  }
-});

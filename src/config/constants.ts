@@ -25,6 +25,7 @@ export const ICON_SIZES = 20;
 export const STANDARD_BUTTON_ICON_SIZE=45;
 export const TASK_SCHEMA = 'Task';
 
+
 export const TASK_PRIORITY_OPTIONS = [
   {
     id: 'High',
