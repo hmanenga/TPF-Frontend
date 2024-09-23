@@ -5,6 +5,7 @@ import axios from 'axios';
 import useFetchWeatherData from '../../../hooks/useFetchWeatherData';
 import moment from 'moment-timezone';
 import { Load } from '../../Load/Load';
+import { formateText } from '../../../utils/helpers';
 
 
 interface WeatherItemProps {
@@ -83,7 +84,7 @@ const DateTime = () => {
       </View>
 
       <View style={styles.rightAlign}>
-        <Text style={styles.timezone}>{data?.timezone}</Text>
+        <Text style={styles.timezone}>{formateText(data?.timezone,13)}</Text>
         <Text style={styles.latlong}>
           {latitude.toFixed(2)}N {longitude.toFixed(2)}E
         </Text>

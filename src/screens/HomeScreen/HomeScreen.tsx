@@ -4,17 +4,19 @@
  *
  * @returns {JSX.Element} - A React Native view containing the task list component.
  */
-import {View} from 'react-native';
+import {View,ScrollView} from 'react-native';
 import TaskList from '../../components/TaskList/TaskList';
 import DateTime from '../../components/weatherComponents/DateTime/DateTime';
 import WeatherScroll from '../../components/weatherComponents/WeatherScroll/WeatherScroll';
 
 export default function HomeScreen() {
   return (
-    <View style={{padding: 10}}>
-      <DateTime />
+    <View style={{ flex: 1, padding: 10 }}>
+    <DateTime />
+    <ScrollView showsVerticalScrollIndicator>
       <WeatherScroll />
       <TaskList />
-    </View>
+    </ScrollView>
+  </View>
   );
 }

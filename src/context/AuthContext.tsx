@@ -20,9 +20,18 @@ export const AuthProvider = ({children}: any) => {
     token: string | null;
     authenticated: boolean | null;
   }>({
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjcwMzA2MzN9.4NEBHUJVfnbbZUJ94v9BvMcU3P30UfCzrYTVZRvp4Q0',
+    token: 'dnsngsdnkgnkdsngnk',
     authenticated: true,
   });
+  /*
+export const AuthProvider = ({children}: any) => {
+  const [authState, setAuthState] = useState<{
+    token: string | null;
+    authenticated: boolean | null;
+  }>({
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjcwMzA2MzN9.4NEBHUJVfnbbZUJ94v9BvMcU3P30UfCzrYTVZRvp4Q0',
+    authenticated: true,
+  });  */
 
   useEffect(() => {
     const loadToken = async () => {

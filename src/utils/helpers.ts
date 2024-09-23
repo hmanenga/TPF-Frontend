@@ -5,6 +5,6 @@ export  function formatePriority(priority: string): string{
     return priority === '1'? 'High' : priority === '2'? 'Medium' : 'Low';
 }
 
-export function formateText(text: string): string{
-    return text.length > 40? `${text.slice(0, 40)}...` : text;
+export function formateText(text: string, charactersQuantity=40): string{
+    return text.length > charactersQuantity? `${text.slice(0, charactersQuantity)}...` : text;
 }

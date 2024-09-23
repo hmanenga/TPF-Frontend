@@ -5,6 +5,11 @@ import {
   FONT_SIZE_SM,
   STANDARD_BORDER_RADIUS_XLARGE,
 } from '../../config/constants';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+
 
 export default StyleSheet.create({
   container: {
@@ -27,20 +32,20 @@ export default StyleSheet.create({
     position: 'absolute',
   },
   lightImage: {
-    width: 90,
-    height: 225,
+    width: wp(22.22),
+    height: hp(29),
   },
   lightImageSmall: {
-    width: 65,
-    height: 160,
+    width: wp(18),
+    height: hp(22.9),
   },
   formContainer: {
     width: '100%',
     height: '100%',
     justifyContent: 'space-around',
     alignContent: 'center',
-    paddingTop: 70,
-    paddingBottom: 10,
+    paddingTop: hp(3),
+    paddingBottom: hp(0.7),
   },
   titleContainer: {
     alignItems: 'center',
@@ -48,19 +53,19 @@ export default StyleSheet.create({
   titleText: {
     color: LightThemeColors.white,
     fontWeight: 'bold',
-    fontSize: FONT_SIZE_LG,
-    letterSpacing: 3,
+    fontSize: hp(3),
+    letterSpacing: hp(0.5),
   },
   inputContainer: {
     alignItems: 'center',
-    marginHorizontal: 4,
-    paddingHorizontal: 4,
+    marginHorizontal: wp(1),
+    paddingHorizontal: wp(1),
   },
   inputWrapper: {
     backgroundColor: LightThemeColors.gray,
-    padding: 5,
+    padding: hp(0.5),
     borderRadius: STANDARD_BORDER_RADIUS_XLARGE,
-    marginBottom: 8,
+    marginBottom: hp(0.8),
     width: '100%',
   },
   textInput: {
@@ -69,20 +74,20 @@ export default StyleSheet.create({
   loginButton: {
     width: '100%',
     backgroundColor: '#38BDF8',
-    padding: 3,
+    padding: hp(1.5),
     borderRadius: STANDARD_BORDER_RADIUS_XLARGE,
-    marginBottom: 3,
+    marginBottom: hp(0.7),
   },
   loginButtonText: {
     fontWeight: 'bold',
     color: LightThemeColors.white,
     textAlign: 'center',
-    fontSize: FONT_SIZE_SM,
+    fontSize: hp(2),
   },
   signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: hp(0.8),
   },
   signupText: {
     color: 'black',

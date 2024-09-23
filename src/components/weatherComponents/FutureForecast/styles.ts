@@ -1,30 +1,34 @@
 import { StyleSheet } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp  } from "react-native-responsive-screen";
 
 export const styles = StyleSheet.create({
     futureForecastItemContainer: {
         flex: 1,
         justifyContent: 'center',
         backgroundColor: '#00000033',
-        borderRadius: 10,
+        borderRadius: hp(1.5),
         borderColor: '#eee',
         borderWidth: 1,
-        padding: 20,
-        marginLeft: 10
+        padding: hp('0.5%'),
+        marginLeft: 10,
+        marginBottom:hp('0.5%'),
+        
     },
   itemImage: {
-    width: 100,
-    height: 100,
+    width: wp(25),
+    height: hp(8)
   },
   day: {
-    fontSize: 20,
+    fontSize: hp(1.5),
     color: 'white',
     backgroundColor: '#3c3c44',
-    padding: 10,
-    borderRadius: 50,
-    marginBottom: 15,
+    padding: hp(0.5),
+    borderRadius: hp(2.5),
+    marginBottom: hp('0.5%'),
     textAlign: 'center',
   },
   text: {
-    color: '#eee'
+    color: '#eee',
+    fontSize: hp('1.5%'),
   }
 });

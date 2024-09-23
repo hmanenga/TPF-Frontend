@@ -1,42 +1,43 @@
 import { StyleSheet } from "react-native";
-
+import { widthPercentageToDP as wp, heightPercentageToDP as hp  } from "react-native-responsive-screen";
 
 export const styles = StyleSheet.create({
     image: {
-      width: 150,
-      height: 150,
+      width: wp('20%'),
+      height: hp('15%'),
     },
     scrollView: {
       backgroundColor: '#18181bcc',
-      padding: 30,
+      height: hp('25%'),
+      padding: hp('1%'),
     },
     currentTempContainer: {
       flexDirection: 'row',
       backgroundColor: '#00000033',
       justifyContent: 'center',
       alignContent: 'center',
-      borderRadius: 10,
+      borderRadius: wp('2.5%'),
       borderColor: '#eee',
       borderWidth: 1,
-      marginBottom: 5,
-      padding: 10
+      marginBottom:hp('0.5%'),
+      padding: hp('0.5%'),
     },
     day: {
-      fontSize: 20,
+      fontSize: hp('2%'),
       color: 'white',
       backgroundColor: '#3c3c44',
-      padding: 10,
+      padding: hp('1%'),
       borderRadius: 5,
       textAlign: 'center',
       marginBottom: 15,
     },
     temp: {
-      fontSize: 15,
+      fontSize: hp('2%'),
       color: 'white',
       textAlign: 'center',
     },
     currentTempSubContainer: {
-      paddingRight: 40,
+      paddingRight: wp('5%'),
     }
   });
   
