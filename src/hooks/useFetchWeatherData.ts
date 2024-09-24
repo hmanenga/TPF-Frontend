@@ -6,16 +6,20 @@ import axios from 'axios';
 const useFetchWeatherData = () => {
   const [data, setData] = useState();
   const [error, setError] = useState('');
-  const [latitude, setLatitude] = useState(38.736946);
-  const [longitude, setLongitude] = useState(-9.142685);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   useEffect(() => {
     const fetchDataFromAPI = async () => {      
-      fetch(`${process.env.WEATHER_API_BASE_URL}${latitude}&lon=${longitude}&exclude=hourly,minutely&units=metric&appid=${process.env.WEATHER_API_KEY}`)
-       .then(response => response.json())
-       .then(data =>{
-        setData(data);        
-       })
+      try {
+        //console.log(`${process.env.WEATHER_API_BASE_URL}${latitude}&lon=${longitude}&exclude=hourly,minutely&units=metric&appid=${process.env.WEATHER_API_KEY}`);
+        const response = await axios.get(`${process.env.WEATHER_API_BASE_URL}${latitude}&lon=${longitude}&exclude=hourly,minutely&units=metric&appid=${process.env.WEATHER_API_KEY}`);
+        console.log('====DATA FETCHED FROM WEATHER SERVICE', JSON.stringify(response.data));
+        setData(response.data);
+      } catch (err) {
+          const errorMessage = (err as Error).message || 'Error fetching weather data';
+          setError(errorMessage);
+      }
     };
 
     Geolocation.getCurrentPosition(
@@ -26,8 +30,6 @@ const useFetchWeatherData = () => {
       },
       error => {
         Alert.alert('GetCurrentPosition Error', JSON.stringify(error));
-        // Fetch data for Lisbon City as fallback
-        fetchDataFromAPI();
       },
       { enableHighAccuracy: true }
     );

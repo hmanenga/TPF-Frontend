@@ -1,10 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {
-  FONT_SIZE_ML ,
-  STANDARD_BORDER_RADIUS,
-  STANDARD_LETTER_SPACING,
-  STANDARD_SPACING_SM,
-} from '../../config/constants'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
  
 
 // Creating & exporting stylesheet
@@ -12,8 +7,9 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 8,
-    height: 45,
+    alignContent: "center",
+    borderRadius: hp(0.5),
+    height: hp(5.5)
   },
   content: {
     flexDirection: "row",

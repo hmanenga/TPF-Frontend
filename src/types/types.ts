@@ -7,6 +7,7 @@ export interface Task {
   priority: string;
   completed: boolean;
   created_at: Date;
+  synced: boolean;
 }
 
 // Define the RadioButtonProps interface

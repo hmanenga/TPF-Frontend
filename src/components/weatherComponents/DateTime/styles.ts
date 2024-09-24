@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     weatherItemContainer: {
       backgroundColor: '#18181b99',
       borderRadius: wp('2.5%'),
-      padding: wp('1%'),
+      padding: wp('1.6%'),
       marginTop: hp('1%'),
     },
     weatherItem: {

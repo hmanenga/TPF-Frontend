@@ -3,7 +3,6 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {Task, TaskState} from '../../../types/types';
 import {getRealm} from '../../../databases/realm';
 import {TASK_SCHEMA} from '../../../config/constants';
-import axios from 'axios';
 
 interface GetTaskArgs {
   taskId: string;
@@ -29,15 +28,6 @@ export const getTasks = createAsyncThunk('task/getTasks', async () => {
     console.error(e);
     throw new Error('Error getting tasks');
   }
-
-  //To fetch data from remote API
-  /* try{
-    const response = await axios.get(TASKS_URL);
-    return response.data;
-
-  }catch(e){
-    return e.message
-  }*/
 });
 
 export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
@@ -63,31 +53,21 @@ export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
   },
 );
 
-export const addNewTask = createAsyncThunk(
-  'tasks/addNewTask',
+export const addTaskToRealm = createAsyncThunk(
+  'tasks/addTaskToRealm',
   async (initialTask: Task) => {
     const realm = await getRealm();
-    try {
-      initialTask._id = uuid.v4();
-      initialTask.completed = false;
-      initialTask.created_at = new Date();
+    initialTask._id = uuid.v4();
+    initialTask.completed = false;
+    initialTask.created_at = new Date();
 
-      realm.write(() => {
-        realm.create(TASK_SCHEMA, initialTask);
+    realm.write(() => {
+      const created = realm.create(TASK_SCHEMA, {
+        ...initialTask,
+        synced: false,
       });
-    } catch (e) {
-      console.error(e);
-      throw new Error('Falha ao atualizar a tarefa');
-    }
-
-    //To add data to remote API
-    /* try{
-    const response = await axios.post(TASKS_URL,initialTask);
-    return response.data;
-
-  }catch(e){
-    return e.message
-  }*/
+      return created;
+    });
   },
 );
 
@@ -113,14 +93,14 @@ export const deleteTask = createAsyncThunk<string, string>(
 export const updateTaskData = createAsyncThunk(
   'tasks/updateTask',
   async ({updatedTaskData}: {updatedTaskData: Task}) => {
-
-    console.log('ID OF TASK====>', updatedTaskData._id);
     const realm = await getRealm();
     try {
       const taskSelected = realm.objectForPrimaryKey(
         TASK_SCHEMA,
         updatedTaskData._id,
       );
+
+
       if (taskSelected) {
         realm.write(() => {
           taskSelected.title = updatedTaskData.title;
@@ -132,11 +112,10 @@ export const updateTaskData = createAsyncThunk(
       return taskSelected;
     } catch (e) {
       console.error(e);
-      throw new Error('Falha ao atualizar a tarefa');
+      throw new Error('Error updating task');
     }
   },
 );
-
 const taskSlice = createSlice({
   name: 'task',
   initialState,
@@ -160,12 +139,15 @@ const taskSlice = createSlice({
       .addCase(getTasks.rejected, (state, action) => {
         console.error('Error fetching tasks:', action.error.message);
         state.error = action.error.message;
-
         state.isLoading = false;
       })
-      // Reducers for addNewTask, updateTask, etc.
-      .addCase(addNewTask.fulfilled, (state, action) => {
+      .addCase(addTaskToRealm.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
+        state.isLoading = false;
+      })
+      .addCase(addTaskToRealm.rejected, (state, action) => {
+        console.error('Error adding task:', action.error.message);
+        state.error = action.error.message;
         state.isLoading = false;
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
@@ -194,19 +176,9 @@ const taskSlice = createSlice({
       })
       .addCase(getTask.fulfilled, (state, action) => {
         if (action.payload) {
-          // Transform Realm object to a plain JavaScript object
-          /*const task = {
-            _id: action.payload._id,
-            title: action.payload.title,
-            description: action.payload.description,
-            dueDate: action.payload.dueDate,
-            priority: action.payload.priority,
-            completed: action.payload.completed || false, // Set default if needed
-            created_at: action.payload.created_at || new Date(), // Set default if needed
-          };*/
           state.currentTask = action.payload;
         } else {
-          state.currentTask = null; // Handle null case
+          state.currentTask = null;
         }
         state.isLoading = false;
       })
@@ -214,9 +186,10 @@ const taskSlice = createSlice({
         console.error('Error fetching task:', action.error.message);
         state.error = action.error.message;
       });
-  },
+        },
 });
 
 // Export actions and reducer
-export const {setIsLoading, resetTask} = taskSlice.actions;
+export const {setIsLoading, resetTask} =
+  taskSlice.actions;
 export default taskSlice.reducer;

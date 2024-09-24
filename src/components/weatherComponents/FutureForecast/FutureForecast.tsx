@@ -11,32 +11,32 @@ const FutureForecast = () => {
   if (!data) {
     return <Load size="medium" />;
   }
-  console.log('WEATHER DATA FOR NEXT 7 DAYS',data.daily);
+
   return (
     <View style={{flexDirection: 'row'}}>
       {data && data.daily.length > 0
-        ? data.daily.map((forecastItem:any, index: number) =>( <FutureForecastItem key={forecastItem.dt} forecastItem={forecastItem} />))
+        ? data.daily.map((forecastItem:any, index: number) =>( index !=0  && <FutureForecastItem key={forecastItem.dt} forecastItem={forecastItem} />))
         : <View/>}
     </View>
   );
 };
 
 const FutureForecastItem = (forecastItem: any) => {
-    //const img ={uri: `http://openweathermap.org/img/wn/${forecastItem.weather[0].icon}@2x.png`};
-   // const img ={uri: `http://openweathermap.org/img/wn/${forecastItem.weather[0].icon}@2x.png`}
-   if(!forecastItem){
+  const weatherData = forecastItem?.forecastItem;
+  const img ={uri: `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`};
+   if(!weatherData){
     return <Load size='medium'/>
    }
-  
+   
    return (
     <View style={styles.futureForecastItemContainer}>
-      <Text style={styles.day}>{moment(forecastItem.dt).format('ddd')}</Text>
+      <Text style={styles.day}>{moment(weatherData.dt * 1000).format('ddd')}</Text>
       <Image
         style={styles.itemImage}
-        source={require('../../../../assets/images/weatherCloud.png')}
+        source={img}
       />
-      <Text style={styles.text}>Night-{forecastItem.temp?.night}</Text>
-      <Text style={styles.text}>Day-{forecastItem.temp?.day}</Text>
+      <Text style={styles.text}>Night-{weatherData.temp?.night}</Text>
+      <Text style={styles.text}>Day-{weatherData.temp?.day}</Text>
     </View>
   );
 };

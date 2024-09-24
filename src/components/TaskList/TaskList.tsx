@@ -47,7 +47,7 @@ const TaskList: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={tasks}
+        data={tasks}        
         ListEmptyComponent={<TaskListEmpty />}
         renderItem={({ item }) => (
           <TaskListItem task={item} onDelete={onDelete} />

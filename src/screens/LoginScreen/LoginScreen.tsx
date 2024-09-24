@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   TextInput,
@@ -8,15 +8,15 @@ import {
   StatusBar,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import styles from './styles';
 import Animated, {
   FadeInUp,
   BounceIn,
   FadeInDown,
 } from 'react-native-reanimated';
-import { validateEmail, validatePassword } from '../../utils/validations';
-import { useAuth } from '../../context/AuthContext';
+import {validateEmail, validatePassword} from '../../utils/validations';
+import {useAuth} from '../../context/AuthContext';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>('');
@@ -26,16 +26,15 @@ export default function LoginScreen() {
     password: '',
   });
 
-
-
-  const { onLogin } = useAuth();
+  const {onLogin} = useAuth();
   const navigation = useNavigation();
 
   const handleLogin = async () => {
     if (validateFields()) {
       const result = await onLogin!(email, password);
       if (result && result.error) {
-        Alert.alert(result.msg);
+        console.log(result.msg);
+        Alert.alert('Failed Login','Invalid email or password. Please try again.');
       }
     }
   };
@@ -134,7 +133,7 @@ export default function LoginScreen() {
           ) : null}
           <Animated.View
             entering={FadeInDown.delay(400).duration(1000).springify()}
-            style={{ width: '100%' }}>
+            style={{width: '100%'}}>
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>

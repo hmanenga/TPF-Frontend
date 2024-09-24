@@ -1,11 +1,13 @@
-import { FONT_SIZE_MD, FONT_SIZE_SM, STANDARD_FLEX, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from './../../config/constants';
+import { FONT_SIZE_SM, STANDARD_FLEX, STANDARD_SPACING_MD, STANDARD_SPACING_SM } from './../../config/constants';
 import {StyleSheet} from 'react-native';
 import { LightThemeColors } from '../../config/colors';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { FONT_SIZE_LG, STANDARD_BORDER_RADIUS } from '../../config/constants';
 
 export default StyleSheet.create({
   container: {
+    width: wp(100),
+    height: hp(45),
     padding: STANDARD_SPACING_SM,
     borderRadius: STANDARD_BORDER_RADIUS,
   },

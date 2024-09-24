@@ -1,3 +1,8 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-native", // Ensures JSX is supported
+    "strict": true,        // Enables strict type-checking options (optional)
+    "noImplicitAny": false // Example of other options you can customize
+  }
 }

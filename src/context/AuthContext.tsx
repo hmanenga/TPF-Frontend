@@ -1,6 +1,6 @@
-import {Children, createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Keychain from 'react-native-keychain';
 
 interface AuthPros {
   authState?: {token: string | null; authenticated: boolean | null};
@@ -11,33 +11,25 @@ interface AuthPros {
 
 const AuthContext = createContext<AuthPros>({} as AuthPros);
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}: any) => {
   const [authState, setAuthState] = useState<{
     token: string | null;
     authenticated: boolean | null;
   }>({
-    token: 'dnsngsdnkgnkdsngnk',
-    authenticated: true,
+    token: '',
+    authenticated: false,
   });
-  /*
-export const AuthProvider = ({children}: any) => {
-  const [authState, setAuthState] = useState<{
-    token: string | null;
-    authenticated: boolean | null;
-  }>({
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjcwMzA2MzN9.4NEBHUJVfnbbZUJ94v9BvMcU3P30UfCzrYTVZRvp4Q0',
-    authenticated: true,
-  });  */
 
   useEffect(() => {
     const loadToken = async () => {
-      const token = await AsyncStorage.getItem(`${process.env.TOKEN_KEY}`);
-      console.log('JWT TOKEN FETCHED FROM ASYNC STORAGE', token);
-      if (token) {
+      // Retreive the credentials
+      const credentials = await Keychain.getGenericPassword();
+
+      if (credentials) {
+        const token = credentials.password;
+
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setAuthState({token, authenticated: true});
       }
@@ -50,13 +42,18 @@ export const AuthProvider = ({children}: any) => {
     try {
       return axios.post(`${process.env.API_HOST}/users`, {email, password});
     } catch (e) {
+      console.warn('Fail trying to register user');
+      console.log(e);
       return {error: true, msg: (e as any).response.data.msg};
     }
   };
+
   const login = async (email: string, password: string) => {
     try {
-      const result = await axios.post(`${process.env.API_HOST}/auth`, {email, password});
-      console.log('-----AuthContext---Login---Result: ' + result);
+      const result = await axios.post(`${process.env.API_HOST}/auth`, {
+        email,
+        password,
+      });
       setAuthState({
         token: result.data.token,
         authenticated: true,
@@ -67,7 +64,10 @@ export const AuthProvider = ({children}: any) => {
       ] = `Bearer ${result.data.token}`;
 
       //Store the token in local storage
-      AsyncStorage.setItem(`${process.env.TOKEN_KEY}`, result.data.token);
+      await Keychain.setGenericPassword(
+        `${process.env.TOKEN_KEY}`,
+        result.data.token,
+      );
 
       return result;
     } catch (e) {
@@ -76,7 +76,7 @@ export const AuthProvider = ({children}: any) => {
   };
   const logout = async () => {
     //Delete the token from local storage
-    localStorage.removeItem(`${process.env.TOKEN_KEY}`);
+    await Keychain.resetGenericPassword();
 
     //Delete the token from the axios defaults headers
     axios.defaults.headers.common['Authorization'] = '';

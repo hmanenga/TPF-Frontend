@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text} from 'react-native';
 import {styles} from './styles';
-import axios from 'axios';
 import useFetchWeatherData from '../../../hooks/useFetchWeatherData';
 import moment from 'moment-timezone';
 import { Load } from '../../Load/Load';

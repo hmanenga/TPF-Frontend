@@ -1,37 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Animated,
-  Alert,
-} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, TextInput, Animated, Alert} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
-import { LightThemeColors } from '../../config/colors';
+import {LightThemeColors} from '../../config/colors';
 import CustomRadioButton from '../CustomRadioButton/CustomRadioButton';
-import { formateDate } from '../../utils/helpers';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { addNewTask, getTask, resetTask } from '../../redux/feature/task/taskSlice';
+import {formateDate} from '../../utils/helpers';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  addTaskToRealm,
+  getTask,
+  resetTask
+} from '../../redux/feature/task/taskSlice';
 import CustomButton from '../CustomButton/CustomButton';
-import { TASK_PRIORITY_OPTIONS } from '../../config/constants';
-import { RootState } from '../../redux/store';
-import { Task } from '../../types/types';
-import { updateTaskData } from '../../redux/feature/task/taskSlice';
- 
+import {TASK_PRIORITY_OPTIONS} from '../../config/constants';
+import {RootState} from '../../redux/store';
+
+import {updateTaskData} from '../../redux/feature/task/taskSlice';
 
 /**
  * TaskForm component for adding/editing tasks.
  * @param {Object} route - Route parameters including task ID.
  * @returns {JSX.Element}
  */
-export default function TaskForm({ route }) {
+export default function TaskForm({route}) {
   const animation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  
-  const { currentTask } = useSelector((state: RootState) => state.task);
+  const {currentTask} = useSelector((state: RootState) => state.task);
   const taskId = route?.params;
 
   // State variables for task details and validation
@@ -41,11 +37,13 @@ export default function TaskForm({ route }) {
     description: '',
     dueDate: new Date(),
     priority: '',
+    sincked: false,
   });
-  
+
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     if (currentTask) {
@@ -58,7 +56,6 @@ export default function TaskForm({ route }) {
       });
     }
   }, [currentTask]);
-  
 
   useEffect(() => {
     if (taskId) {
@@ -78,16 +75,18 @@ export default function TaskForm({ route }) {
 
   const animatedStyle = {
     opacity: animation,
-    transform: [{
-      translateY: animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [50, 0],
-      }),
-    }],
+    transform: [
+      {
+        translateY: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [50, 0],
+        }),
+      },
+    ],
   };
 
-  const handleChange = (field) => (value) => {
-    setTask(prev => ({ ...prev, [field]: value }));
+  const handleChange = field => value => {
+    setTask(prev => ({...prev, [field]: value}));
   };
 
   const handleSubmit = () => {
@@ -101,21 +100,27 @@ export default function TaskForm({ route }) {
   };
 
   const validateFields = () => {
-    const newErrors: Partial<Task> = {};
+    const newErrors = {
+      title: '',
+      description: '',
+      dueDate: '',
+      priority: '',
+    };
     if (!task.title.trim()) newErrors.title = 'Title is required';
-    if (!task.description.trim()) newErrors.description = 'Description is required';
+    if (!task.description.trim())newErrors.description = 'Description is required';
     if (!task.priority.trim()) newErrors.priority = 'Priority is required';
     if (!task.dueDate) newErrors.dueDate = 'Due date is required';
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    //return Object.keys(newErrors).length === 0;
+    return Object.values(newErrors).every((value)=>value==='');
   };
 
   const saveTask = async () => {
     try {
-       dispatch(addNewTask(task));
+      dispatch(addTaskToRealm(task));  
       navigation.goBack();
-      Alert.alert('Sucsess','Task saved successfully');
+      Alert.alert('Success', 'Task saved successfully');
     } catch (error) {
       console.error('Failed to save the task:', error);
       Alert.alert('Error', 'Failed to save the task');
@@ -124,14 +129,15 @@ export default function TaskForm({ route }) {
 
   const updateTask = async () => {
     try {
-      dispatch(updateTaskData(task));
+      dispatch(updateTaskData({ updatedTaskData: task }));
+
       navigation.goBack();
-      Alert.alert('Sucsess','Task updated successfully');
+      Alert.alert('Sucsess', 'Task updated successfully');
     } catch (error) {
       console.error('Failed to update the task:', error);
       Alert.alert('Error', 'Failed to update the task');
     }
-  }
+  };
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
@@ -151,7 +157,9 @@ export default function TaskForm({ route }) {
         placeholder="Description"
         style={styles.input}
       />
-      {errors.description && <Text style={styles.errors}>{errors.description}</Text>}
+      {errors.description && (
+        <Text style={styles.errors}>{errors.description}</Text>
+      )}
 
       <CustomButton
         title="Pick Due Date"
@@ -163,9 +171,9 @@ export default function TaskForm({ route }) {
           modal
           open={open}
           date={task.dueDate}
-          onConfirm={(date) => {
+          onConfirm={date => {
             setOpen(false);
-            setTask(prev => ({ ...prev, dueDate: date }));
+            setTask(prev => ({...prev, dueDate: date}));
           }}
           onCancel={() => setOpen(false)}
         />
@@ -188,9 +196,9 @@ export default function TaskForm({ route }) {
                 setTask(prevTask => ({
                   ...prevTask,
                   priority: value,
-                })) 
+                }))
             }
-            selectedId={task.priority} 
+            selectedId={task.priority}
           />
         </View>
       </View>
