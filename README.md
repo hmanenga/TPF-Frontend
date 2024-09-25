@@ -1,7 +1,3 @@
-Here’s the updated `README.md` file with your specified additions:
-
----
-
 # Comprehensive To-Do List App
 
 This project is a React Native To-Do List application that allows users to create, edit, delete, and manage tasks. The app supports user authentication, offline functionality, data synchronization, responsive design, and other advanced features such as animations, gestures, and API integration.
