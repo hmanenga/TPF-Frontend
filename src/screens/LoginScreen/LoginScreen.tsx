@@ -31,6 +31,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (validateFields()) {
+      console.log('FIELDS HAVE BEEN VALID');
       const result = await onLogin!(email, password);
       if (result && result.error) {
         console.log(result.msg);

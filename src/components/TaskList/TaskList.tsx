@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { deleteTask } from '../../redux/feature/task/taskSlice';
 import CustomButton from '../CustomButton/CustomButton';
 import { Load } from '../Load/Load';
-
+import { useAuth } from '../../context/AuthContext';
 // Component for displaying an empty task list
 const TaskListEmpty = () => (
   <Text style={styles.noItemText}>No task found!</Text>
@@ -25,6 +25,9 @@ const TaskList: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { tasks, isLoading } = useSelector((state: RootState) => state.task);
+  const {authState} = useAuth();
+  const email = authState?.email;
+
 
   const handleCreateTask = () => {
     navigation.navigate('AddTaskScreen');
@@ -32,7 +35,7 @@ const TaskList: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(getTasks());
+      dispatch(getTasks(email));
     }, [dispatch]),
   );
 

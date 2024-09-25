@@ -17,6 +17,7 @@ import {TASK_PRIORITY_OPTIONS} from '../../config/constants';
 import {RootState} from '../../redux/store';
 
 import {updateTaskData} from '../../redux/feature/task/taskSlice';
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * TaskForm component for adding/editing tasks.
@@ -29,7 +30,8 @@ export default function TaskForm({route}) {
   const dispatch = useDispatch();
   const {currentTask} = useSelector((state: RootState) => state.task);
   const taskId = route?.params;
-
+  const {authState} = useAuth();
+  const email = authState?.email;
   // State variables for task details and validation
   const [task, setTask] = useState({
     _id: '',
@@ -37,7 +39,9 @@ export default function TaskForm({route}) {
     description: '',
     dueDate: new Date(),
     priority: '',
-    sincked: false,
+    synced: false,
+    completed: false,
+    owner_id: email,
   });
 
   const [open, setOpen] = useState(false);
@@ -53,6 +57,9 @@ export default function TaskForm({route}) {
         description: currentTask.description,
         dueDate: currentTask.dueDate,
         priority: currentTask.priority,
+        completed: currentTask.completed,
+        synced: currentTask.synced,
+        owner_id: email
       });
     }
   }, [currentTask]);
@@ -118,7 +125,7 @@ export default function TaskForm({route}) {
 
   const saveTask = async () => {
     try {
-      dispatch(addTaskToRealm(task));  
+      dispatch(addTaskToRealm({initialTask:task,email}));  
       navigation.goBack();
       Alert.alert('Success', 'Task saved successfully');
     } catch (error) {
@@ -138,11 +145,10 @@ export default function TaskForm({route}) {
       Alert.alert('Error', 'Failed to update the task');
     }
   };
+  
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      <Text style={styles.title}>New Task</Text>
-
       <TextInput
         value={task.title}
         onChangeText={handleChange('title')}

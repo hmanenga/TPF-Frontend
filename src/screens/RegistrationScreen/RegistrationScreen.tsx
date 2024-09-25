@@ -11,24 +11,21 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import styles from './styles';
 import Animated, {
-  FadeIn,
+  
   FadeInUp,
-  FadeOut,
-  BounceIn,
+    BounceIn,
   FadeInDown,
 } from 'react-native-reanimated';
 import {validateEmail, validatePassword} from '../../utils/validations';
 import {useAuth} from '../../context/AuthContext';
 
 export default function RegistrationScreen() {
-  const [userName, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const {onLogin, onRegister} = useAuth();
   const navigation = useNavigation();
   const [errors, setErrors] = useState({
-    userName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -58,15 +55,11 @@ export default function RegistrationScreen() {
    */
   const validateFields = () => {
     const newErrors = {
-      userName: '',
       email: '',
       password: '',
       confirmPassword: '',
     };
-    // Validate userName
-    if (!userName.trim()) {
-      newErrors.userName = 'User name is required';
-    }
+  
     // Validate email
     if (!email.trim()) {
       newErrors.email = 'Email is required';
@@ -128,25 +121,7 @@ export default function RegistrationScreen() {
           </Animated.Text>
         </View>
         <View style={styles.inputContainer}>
-          <Animated.View
-            entering={FadeInDown.duration(1000).springify()}
-            style={styles.inputWrapper}>
-            <TextInput
-              style={styles.textInput}
-              value={userName}
-              placeholder="Username"
-              placeholderTextColor={'white'}
-              onChangeText={setUserName}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              accessibilityLabel="User name Input"
-            />
-          </Animated.View>
-          {errors.userName ? (
-            <Text style={styles.error}>{errors.userName}</Text>
-          ) : null}
-
-          <Animated.View
+         <Animated.View
             entering={FadeInDown.delay(200).duration(1000).springify()}
             style={styles.inputWrapper}>
             <TextInput

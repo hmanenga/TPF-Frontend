@@ -8,7 +8,8 @@ export const TaskSchema ={
     created_at: "date",
     priority: "string",
     completed: "bool",
-    synced: "bool", 
+    synced: "bool",
+    owner_id: "string", 
   },
   primaryKey: "_id",
 }

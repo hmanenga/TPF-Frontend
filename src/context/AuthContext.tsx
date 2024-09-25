@@ -1,9 +1,10 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import * as Keychain from 'react-native-keychain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthPros {
-  authState?: {token: string | null; authenticated: boolean | null};
+  authState?: {token: string | null;email: string; authenticated: boolean | null};
   onRegister?: (email: string, password: string) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -16,9 +17,11 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({children}: any) => {
   const [authState, setAuthState] = useState<{
     token: string | null;
+    email: string,
     authenticated: boolean | null;
   }>({
     token: '',
+    email: '',
     authenticated: false,
   });
 
@@ -27,11 +30,14 @@ export const AuthProvider = ({children}: any) => {
       // Retreive the credentials
       const credentials = await Keychain.getGenericPassword();
 
+      //Retrieve theemail address
+      const email= await AsyncStorage.getItem('email');
+
       if (credentials) {
         const token = credentials.password;
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setAuthState({token, authenticated: true});
+        setAuthState({token, email: email as string,authenticated: true});
       }
     };
 
@@ -56,6 +62,7 @@ export const AuthProvider = ({children}: any) => {
       });
       setAuthState({
         token: result.data.token,
+        email,
         authenticated: true,
       });
       //Insert the token into the session for future requests
@@ -68,6 +75,9 @@ export const AuthProvider = ({children}: any) => {
         `${process.env.TOKEN_KEY}`,
         result.data.token,
       );
+
+      //Store the email address in local storage
+      await AsyncStorage.setItem('email', email);
 
       return result;
     } catch (e) {
@@ -82,7 +92,7 @@ export const AuthProvider = ({children}: any) => {
     axios.defaults.headers.common['Authorization'] = '';
 
     //reset auth state
-    setAuthState({token: null, authenticated: false});
+    setAuthState({token: null,email: '', authenticated: false});
   };
 
   const value = {

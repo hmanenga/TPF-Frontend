@@ -7,6 +7,7 @@ export interface Task {
   priority: string;
   completed: boolean;
   created_at: Date;
+  owner_id: string;
   synced: boolean;
 }
 

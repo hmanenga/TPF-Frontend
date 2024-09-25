@@ -15,13 +15,13 @@ const initialState: TaskState = {
   error: undefined,
 };
 
-export const getTasks = createAsyncThunk('task/getTasks', async () => {
+export const getTasks = createAsyncThunk('task/getTasks', async (email) => {
   const realm = await getRealm();
-
+  
   try {
     const response = realm
       .objects(TASK_SCHEMA)
-      .filtered(`completed = false`)
+      .filtered(`completed = false && owner_id ==$0`,email)
       .sorted('created_at', true);
     return Array.from(response);
   } catch (e) {
@@ -32,7 +32,7 @@ export const getTasks = createAsyncThunk('task/getTasks', async () => {
 
 export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
   'task/getTask',
-  async ({taskId}) => {
+  async (taskId) => {
     const realm = await getRealm();
     try {
       const fetchedTask = realm.objectForPrimaryKey(TASK_SCHEMA, taskId);
@@ -41,26 +41,19 @@ export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
       console.error(e);
       throw new Error('Error getting task');
     }
-
-    //To fetch data from remote API
-    /* try{
-    const response = await axios.get(TASKS_URL);
-    return response.data;
-
-  }catch(e){
-    return e.message
-  }*/
   },
 );
 
 export const addTaskToRealm = createAsyncThunk(
   'tasks/addTaskToRealm',
-  async (initialTask: Task) => {
+  async (payload: { initialTask: Task; email: string }) => {
     const realm = await getRealm();
+    const { initialTask, email } = payload;
     initialTask._id = uuid.v4();
     initialTask.completed = false;
     initialTask.created_at = new Date();
-
+    initialTask.owner_id = email;
+   
     realm.write(() => {
       const created = realm.create(TASK_SCHEMA, {
         ...initialTask,
