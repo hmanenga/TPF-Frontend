@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import RadioGroup from 'react-native-radio-buttons-group';
-import  RadioButtonProps  from '../../types/types'; // Adjust the import based on your file structure
+import  {RadioButtonProps}  from '../../types/types'; // Adjust the import based on your file structure
 import { LightThemeColors } from '../../config/colors';
 
 interface CustomRadioButtonProps {

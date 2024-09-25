@@ -24,6 +24,7 @@ export const STANDARD_SPACING_XLG = scale(12);
 export const ICON_SIZES = 20;
 export const STANDARD_BUTTON_ICON_SIZE=45;
 export const TASK_SCHEMA = 'Task';
+export const  MOCK_SERVER_BASE_URL='http://10.0.2.2:3001/tasks/'
 
 
 export const TASK_PRIORITY_OPTIONS = [

@@ -5,6 +5,7 @@ import useFetchWeatherData from '../../../hooks/useFetchWeatherData';
 import moment from 'moment-timezone';
 import { Load } from '../../Load/Load';
 import { formateText } from '../../../utils/helpers';
+import { useNetwork } from '../../../context/NetworkContext';
 
 
 interface WeatherItemProps {
@@ -29,6 +30,7 @@ const DateTime = () => {
   const [date, setDate] = useState();
   const [time, setTime] = useState();
   const {data, latitude, longitude} = useFetchWeatherData();
+  const {hasInternet} = useNetwork();
 
   if (!data) {
     return <Load size="medium" />;

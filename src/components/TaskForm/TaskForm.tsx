@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, TextInput, Animated, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TextInput, Alert} from 'react-native';
 import styles from './styles';
 import DatePicker from 'react-native-date-picker';
 import {LightThemeColors} from '../../config/colors';
@@ -9,23 +9,26 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   addTaskToRealm,
-  getTask,
-  resetTask
+  getOneTask,
+  resetTask,
 } from '../../redux/feature/task/taskSlice';
 import CustomButton from '../CustomButton/CustomButton';
 import {TASK_PRIORITY_OPTIONS} from '../../config/constants';
 import {RootState} from '../../redux/store';
-
+import {useNetwork} from '../../context/NetworkContext';
 import {updateTaskData} from '../../redux/feature/task/taskSlice';
-import { useAuth } from '../../context/AuthContext';
-
+import {useAuth} from '../../context/AuthContext';
+import Animated, {BounceInRight, BounceOut} from 'react-native-reanimated';
+import { syncTasksWithServer } from '../../redux/feature/task/taskSlice';
+function App() {
+  return <Animated.View entering={BounceInRight} exiting={BounceOut} />;
+}
 /**
  * TaskForm component for adding/editing tasks.
  * @param {Object} route - Route parameters including task ID.
  * @returns {JSX.Element}
  */
 export default function TaskForm({route}) {
-  const animation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {currentTask} = useSelector((state: RootState) => state.task);
@@ -47,7 +50,7 @@ export default function TaskForm({route}) {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const {hasInternet} = useNetwork();
 
   useEffect(() => {
     if (currentTask) {
@@ -59,38 +62,20 @@ export default function TaskForm({route}) {
         priority: currentTask.priority,
         completed: currentTask.completed,
         synced: currentTask.synced,
-        owner_id: email
+        owner_id: email,
       });
     }
   }, [currentTask]);
 
   useEffect(() => {
     if (taskId) {
-      dispatch(getTask(taskId));
+      dispatch(getOneTask(taskId));
     }
-
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
 
     return () => {
       dispatch(resetTask());
     };
   }, [dispatch, taskId]);
-
-  const animatedStyle = {
-    opacity: animation,
-    transform: [
-      {
-        translateY: animation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [50, 0],
-        }),
-      },
-    ],
-  };
 
   const handleChange = field => value => {
     setTask(prev => ({...prev, [field]: value}));
@@ -114,18 +99,23 @@ export default function TaskForm({route}) {
       priority: '',
     };
     if (!task.title.trim()) newErrors.title = 'Title is required';
-    if (!task.description.trim())newErrors.description = 'Description is required';
+    if (!task.description.trim())
+      newErrors.description = 'Description is required';
     if (!task.priority.trim()) newErrors.priority = 'Priority is required';
     if (!task.dueDate) newErrors.dueDate = 'Due date is required';
 
     setErrors(newErrors);
     //return Object.keys(newErrors).length === 0;
-    return Object.values(newErrors).every((value)=>value==='');
+    return Object.values(newErrors).every(value => value === '');
   };
 
   const saveTask = async () => {
     try {
-      dispatch(addTaskToRealm({initialTask:task,email}));  
+      dispatch(addTaskToRealm({initialTask: task, email}));
+      // Check if we are online and sync if true
+      if (hasInternet &&!task.synced) {
+        dispatch(syncTasksWithServer(email));
+      }
       navigation.goBack();
       Alert.alert('Success', 'Task saved successfully');
     } catch (error) {
@@ -136,7 +126,7 @@ export default function TaskForm({route}) {
 
   const updateTask = async () => {
     try {
-      dispatch(updateTaskData({ updatedTaskData: task }));
+      dispatch(updateTaskData({updatedTaskData: task}));
 
       navigation.goBack();
       Alert.alert('Sucsess', 'Task updated successfully');
@@ -145,10 +135,12 @@ export default function TaskForm({route}) {
       Alert.alert('Error', 'Failed to update the task');
     }
   };
-  
 
   return (
-    <Animated.View style={[styles.container, animatedStyle]}>
+    <Animated.View
+      entering={BounceInRight.duration(1000)}
+      exiting={BounceOut}
+      style={styles.container}>
       <TextInput
         value={task.title}
         onChangeText={handleChange('title')}

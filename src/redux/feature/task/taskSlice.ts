@@ -2,7 +2,8 @@ import uuid from 'react-native-uuid';
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {Task, TaskState} from '../../../types/types';
 import {getRealm} from '../../../databases/realm';
-import {TASK_SCHEMA} from '../../../config/constants';
+import {MOCK_SERVER_BASE_URL, TASK_SCHEMA} from '../../../config/constants';
+import axios from 'axios';
 
 interface GetTaskArgs {
   taskId: string;
@@ -15,13 +16,65 @@ const initialState: TaskState = {
   error: undefined,
 };
 
-export const getTasks = createAsyncThunk('task/getTasks', async (email) => {
+// Sync tasks with the server
+export const syncTasksWithServer = createAsyncThunk(
+  'task/syncTasksWithServer',
+  async email => {
+    const realm = await getRealm();
+    const unsyncedTasks = realm
+      .objects(TASK_SCHEMA)
+      .filtered('synced == false AND owner_id == $0', email);
+
+    const unsyncedArray = Array.from(unsyncedTasks);
+
+    try {
+      for (const task of unsyncedArray) {
+        // Prepare the task data by modifying the synced property
+         const {_id, ...taskData} = task;      
+        try {
+          // Push the task to the server
+          const response = await axios.post(MOCK_SERVER_BASE_URL, taskData);
+          if (response.status === 201) {
+            console.warn('Successfully synced task with the server!');
+          }
+        } catch (e) {
+          console.error('Error syncing task:', e);   
+        }
+      }
+      return unsyncedArray;
+    } catch (e) {
+      console.error('Error syncing tasks:', e);
+    }
+  },
+);
+
+// Thunk to add task to Realm (offline)
+export const addTaskToRealm = createAsyncThunk(
+  'task/addTaskToRealm',
+  async (payload: {initialTask: Task; email: string}, {dispatch}) => {
+    const realm = await getRealm();
+    const {initialTask, email} = payload;
+    initialTask._id = uuid.v4();
+    initialTask.completed = false;
+    initialTask.created_at = new Date();
+    initialTask.owner_id = email;
+    initialTask.synced = false; 
+
+    realm.write(() => {
+      realm.create(TASK_SCHEMA, initialTask);
+    });
+
+    return initialTask;
+  },
+);
+
+export const getTasks = createAsyncThunk('task/getTasks', async email => {
   const realm = await getRealm();
-  
+
   try {
     const response = realm
       .objects(TASK_SCHEMA)
-      .filtered(`completed = false && owner_id ==$0`,email)
+      .filtered(`completed = false && owner_id ==$0`, email)
       .sorted('created_at', true);
     return Array.from(response);
   } catch (e) {
@@ -30,9 +83,9 @@ export const getTasks = createAsyncThunk('task/getTasks', async (email) => {
   }
 });
 
-export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
-  'task/getTask',
-  async (taskId) => {
+export const getOneTask = createAsyncThunk<Task | null, GetTaskArgs>(
+  'task/getOneTask',
+  async ({taskId}) => {
     const realm = await getRealm();
     try {
       const fetchedTask = realm.objectForPrimaryKey(TASK_SCHEMA, taskId);
@@ -41,26 +94,6 @@ export const getTask = createAsyncThunk<Task | null, GetTaskArgs>(
       console.error(e);
       throw new Error('Error getting task');
     }
-  },
-);
-
-export const addTaskToRealm = createAsyncThunk(
-  'tasks/addTaskToRealm',
-  async (payload: { initialTask: Task; email: string }) => {
-    const realm = await getRealm();
-    const { initialTask, email } = payload;
-    initialTask._id = uuid.v4();
-    initialTask.completed = false;
-    initialTask.created_at = new Date();
-    initialTask.owner_id = email;
-   
-    realm.write(() => {
-      const created = realm.create(TASK_SCHEMA, {
-        ...initialTask,
-        synced: false,
-      });
-      return created;
-    });
   },
 );
 
@@ -92,7 +125,6 @@ export const updateTaskData = createAsyncThunk(
         TASK_SCHEMA,
         updatedTaskData._id,
       );
-
 
       if (taskSelected) {
         realm.write(() => {
@@ -157,9 +189,9 @@ const taskSlice = createSlice({
 
         state.tasks = state.tasks.map(task => {
           if (task._id === updatedTask._id) {
-            return {...task, ...updatedTask}; // Return updated task
+            return {...task, ...updatedTask}; 
           }
-          return task; // Return unchanged task
+          return task; 
         });
       })
       .addCase(updateTaskData.rejected, (state, action) => {
@@ -167,7 +199,7 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       })
-      .addCase(getTask.fulfilled, (state, action) => {
+      .addCase(getOneTask.fulfilled, (state, action) => {
         if (action.payload) {
           state.currentTask = action.payload;
         } else {
@@ -175,14 +207,26 @@ const taskSlice = createSlice({
         }
         state.isLoading = false;
       })
-      .addCase(getTask.rejected, (state, action) => {
+      .addCase(getOneTask.rejected, (state, action) => {
         console.error('Error fetching task:', action.error.message);
         state.error = action.error.message;
+      })
+      .addCase(syncTasksWithServer.fulfilled, (state, action) => {
+        action.payload.forEach((syncedTask) => {
+          const taskIndex = state.tasks.findIndex(
+            (task) => task._id === syncedTask._id
+          );
+          if (taskIndex !== -1) {
+            state.tasks[taskIndex].synced = true; 
+          }
+        });
+      })
+      .addCase(syncTasksWithServer.rejected, (state, action) => {
+        state.error = action.error.message;
       });
-        },
+  },
 });
 
 // Export actions and reducer
-export const {setIsLoading, resetTask} =
-  taskSlice.actions;
+export const {setIsLoading, resetTask} = taskSlice.actions;
 export default taskSlice.reducer;

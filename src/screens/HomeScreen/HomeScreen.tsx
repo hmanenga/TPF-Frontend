@@ -10,10 +10,9 @@ import DateTime from '../../components/weatherComponents/DateTime/DateTime';
 import WeatherScroll from '../../components/weatherComponents/WeatherScroll/WeatherScroll';
 
 export default function HomeScreen() {
-
   return (
     <View>
-       <DateTime />
+      <DateTime />
       <WeatherScroll />
       <TaskList />
     </View>

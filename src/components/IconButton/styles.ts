@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import colors from '../../../src/config/colors';
+import { LightThemeColors } from '../../config/colors';
 
 export default StyleSheet.create({
   container: {
@@ -8,6 +8,6 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: LightThemeColors.primary,
   },
 });

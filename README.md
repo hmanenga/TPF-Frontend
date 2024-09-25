@@ -1,6 +1,4 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
-Here’s the complete **README.md** file for your GitHub repository, including setup instructions, how to run the app, and additional notes as per the task requirements:
+Here’s the updated `README.md` file with your specified additions:
 
 ---
 
@@ -25,17 +23,17 @@ This project is a React Native To-Do List application that allows users to creat
 
 Ensure you have the following installed:
 
-- **Node.js** (v14 or higher) and **npm** or **yarn**
-- **React Native CLI** or **Expo CLI** (depending on your environment)
-- **Android Studio** or **Xcode** for emulating devices or testing on real devices
+- **Node.js** (v18 or higher) and **npm**
+- **React Native CLI**
+- **Android Studio** or **Vs code** for emulating devices or testing on real devices. However, the app was not tested on iOS devices.
 
 ### Step 1: Clone the Repository
 
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/comprehensive-todo-list-app.git
-cd comprehensive-todo-list-app
+git clone  https://github.com/your-username/TPF-Frontend/
+cd TPF-Frontend
 ```
 
 ### Step 2: Install Dependencies
@@ -45,71 +43,62 @@ Run the following command to install all the necessary dependencies:
 ```bash
 # Using npm
 npm install
-
-# OR using yarn
-yarn install
 ```
 
-### Step 3: Configure Environment Variables
+### Step 3: Configure JWT AUTH Server
 
-Create a `.env` file in the root directory of the project and add the following variables:
+Run the following command to configure the local JWT server for authentication ,A local JWT server is used for authentication with tokens.
 
 ```bash
-API_HOST=https://your-api-host.com
-OPENWEATHERMAP_API_KEY=your_openweathermap_api_key
-TOKEN_KEY=your_jwt_token_key
+cd jwt-server
+npm install
+nodemon --watch
+
 ```
 
-- Replace `your-api-host.com` with the backend API endpoint (mock API can be used).
-- Get the `API_KEY` for weather data from [OpenWeatherMap](https://openweathermap.org/api).
-- Set a secure `TOKEN_KEY` for JWT authentication.
+### Step 4: Configure json-server which acts as a Mock API Server
 
-### Step 4: Running the App
+Run the following commands to configure the json-server for task synchronization.When you add, update, or delete tasks using your React Native app, the changes should be reflected in the db.json in the root of the application
 
-For **iOS**:
+```bash	
+ json-server --watch db.json --port 3001
 
-```bash
-npm run ios
-```
+```	
+
+### Step 6: Running the App
 
 For **Android**:
 
 ```bash
-npm run android
+npm run start or npm run android
+
 ```
 
 Ensure that you have the necessary emulators or physical devices running.
-
-### Step 5: Running Tests
-
-To run tests, you can use **Jest** and the **React Native Testing Library**. Run the following command:
-
-```bash
-npm test
-```
 
 ## Features Breakdown
 
 ### 1. User Authentication
 
 - Users can register and log in using email and password.
-- React Navigation is used for routing between the login/registration screens and the main app.
-- Authentication status is persisted using React Context for state management.
+- React Stack Navigation is used for routing between the login/registration screens and the main app.
+- Authentication status is persisted using React Native Keychain for security purposes and React Context for Auth state management.
 
 ### 2. Task Management
 
 - Users can create, update, and delete tasks. Each task has a title, description, due date, and priority.
-- Redux is used to manage task states, ensuring that all updates are reflected properly.
+- Redux Toolkit is used to manage task states and save tasks to a local Realm database, ensuring that all updates are reflected properly.
 
 ### 3. Offline Support
 
-- Tasks are stored locally using **AsyncStorage** (or **Realm** as an alternative).
+- Tasks are stored locally using Realm and a mock JSON server as a backend API.
+- NetInfo is used to manage internet connectivity and sync tasks when it is suitable.
 - The app is fully functional offline and synchronizes with the backend once a connection is re-established.
 
 ### 4. API Integration
 
-- The home screen fetches and displays weather information based on the user's location using the **OpenWeatherMap API**.
-- Weather data is updated in real-time, and users can see the current weather conditions.
+- The home screen fetches and displays weather information based on the user's location (latitude and longitude) using the **OpenWeatherMap API**.
+- Weather data is updated in real-time, and users can see the current weather conditions and 7-day forecast.
 
 ### 5. Form Validation
 
@@ -124,7 +113,7 @@ npm test
 ### 7. Animations and Gestures
 
 - Swipe gestures are implemented for deleting tasks from the list.
-- Animations enhance the user experience when creating, deleting, or updating tasks using the **Animated API** or **Reanimated** library.
+- Animations enhance the user experience when creating, deleting, or updating tasks using the **Reanimated** library.
 
 ### 8. Error Handling
 
@@ -136,11 +125,10 @@ npm test
 - **React Native**: Core framework for building the app.
 - **Redux**: For managing global state and tasks.
 - **Axios**: For making HTTP requests to the backend and weather APIs.
-- **AsyncStorage** or **Realm**: For offline storage and persistence.
-- **React Navigation**: For navigation between different screens.
+- **Realm**: For offline storage and persistence.
+- **React Stack Navigation**: For navigation between different screens.
 - **OpenWeatherMap API**: To fetch and display weather information.
-- **Animated API** or **Reanimated**: For handling animations and gestures.
-- **Jest**: For unit and integration tests.
+- **Reanimated**: For handling animations and gestures.
 
 ## Package.json Overview
 
@@ -197,14 +185,17 @@ npm test
 
 ## Additional Notes
 
-- For **offline storage**, you can choose between **AsyncStorage** or **Realm**, depending on the requirements.
-- Ensure that you replace the mock API and the OpenWeatherMap API key with actual values in the `.env` file.
-- **Testing**: Unit tests are provided using **Jest** and **React Native Testing Library**.
+- For **offline storage**, I have choosen json-server as the Mock API Backend and   **Realm** as a local database.
+for weather data I have integrated the application with the OpenWeatherMap API key with actual values in the `.env` file.
+
+- **Testing**:Unit tests were not included in the application scope; however, they would be important if time and scope allowed. I would utilize Jest and React Native Testing Library for this purpose.
+
+-**Pus Notiications and Calendar**: It would be desirable for the application to be able to send alerts by integrating with Google Calendar to send notifications or even push notifications.
+
+--**Team tasks**:In a broader perspective, the application could serve for team task management, handling interdependent tasks and potential conflicts.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the TPF License.
 
 ---
-
-This README file is designed to guide users through the process of setting up and running the app while providing a detailed explanation of the features implemented.

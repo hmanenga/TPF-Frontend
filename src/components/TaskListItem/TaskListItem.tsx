@@ -11,9 +11,10 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {  ICON_SIZE_XS } from '../../config/constants';
 import { RootStackParamList, Task } from '../../types/types';
-import { formateText } from '../../utils/helpers';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { formateText } from '../../utils/helpers';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+
 
 interface TaskListItemProps {
   task: Task;
@@ -27,7 +28,7 @@ const VerticalLine = () => <View style={styles.verticalLine} />;
 // Task Description component
 const TaskDescription: React.FC<{ task: Task }> = ({ task }) => (
   <View style={styles.taskInfo}>
-    <Text style={styles.text}>{formateText(task?.description,wp(8))}</Text>
+    <Text numberOfLines={1} style={styles.text}>{formateText(task?.description,wp(8))}</Text>
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Icon name="schedule" size={ICON_SIZE_XS} />
       <Text style={styles.subText}>{task.dueDate.toLocaleDateString()}</Text>
